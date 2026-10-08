@@ -1,6 +1,7 @@
+import type { Podcast } from "../../../shared/types"
 import type { TopPodcastsResponse } from "./types"
 
-function mapPodcasts(response: TopPodcastsResponse) {
+function mapPodcasts(response: TopPodcastsResponse): Podcast[] {
     return response.feed.entry.map((entry) => ({
         id: entry.id.attributes['im:id'],
         name: entry['im:name'].label,

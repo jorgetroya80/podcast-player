@@ -6,9 +6,14 @@ import { routes } from './router'
 import { createQueryClient } from '../shared/api/queryClient'
 
 describe('App', () => {
-  it('renders the current route', () => {
-    render(<App router={createMemoryRouter(routes)} queryClient={createQueryClient()} />)
+  it('renders the current route', async () => {
+    render(
+      <App
+        router={createMemoryRouter(routes(createQueryClient()))}
+        queryClient={createQueryClient()}
+      />,
+    )
 
-    expect(screen.getByRole('main')).toBeInTheDocument()
+    expect(await screen.findByRole('main')).toBeInTheDocument()
   })
 })

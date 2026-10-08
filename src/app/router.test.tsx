@@ -3,9 +3,14 @@ import { createMemoryRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 
 import { routes } from './router'
+import { createQueryClient } from '../shared/api/queryClient'
 
 const renderAt = (path: string) => {
-  render(<RouterProvider router={createMemoryRouter(routes, { initialEntries: [path] })} />)
+  render(
+    <RouterProvider
+      router={createMemoryRouter(routes(createQueryClient()), { initialEntries: [path] })}
+    />,
+  )
 }
 
 describe('routes', () => {
@@ -13,8 +18,8 @@ describe('routes', () => {
     ['/', /podcast list/i],
     ['/podcast/1', /podcast detail/i],
     ['/podcast/1/episode/2', /episode detail/i],
-  ])('renders the right page at %s', (path, heading) => {
+  ])('renders the right page at %s', async (path, heading) => {
     renderAt(path)
-    expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: heading })).toBeInTheDocument()
   })
 })

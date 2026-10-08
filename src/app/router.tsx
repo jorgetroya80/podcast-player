@@ -1,16 +1,22 @@
 import { createBrowserRouter, type RouteObject } from 'react-router'
+import type { QueryClient } from '@tanstack/react-query'
 
 import AppLayout from './layouts/AppLayout'
 import PodcastLayout from './layouts/PodcastLayout'
 import PodcastListPage from '../pages/PodcastListPage/PodcastListPage'
 import PodcastDetailPage from '../pages/PodcastDetailPage/PodcastDetailPage'
 import EpisodeDetailPage from '../pages/EpisodeDetailPage/EpisodeDetailPage'
+import { podcastsQuery } from '../features/podcasts/api/podcastsQuery'
 
-export const routes: RouteObject[] = [
+export const routes = (queryClient: QueryClient): RouteObject[] => [
   {
     element: <AppLayout />,
     children: [
-      { path: '/', element: <PodcastListPage /> },
+      {
+        path: '/',
+        element: <PodcastListPage />,
+        loader: () => queryClient.query(podcastsQuery),
+      },
       {
         path: 'podcast/:podcastId',
         element: <PodcastLayout />,
@@ -23,4 +29,5 @@ export const routes: RouteObject[] = [
   },
 ]
 
-export const createAppRouter = () => createBrowserRouter(routes)
+export const createAppRouter = (queryClient: QueryClient) =>
+  createBrowserRouter(routes(queryClient))

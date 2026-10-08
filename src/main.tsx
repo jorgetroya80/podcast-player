@@ -10,7 +10,7 @@ import { ONE_DAY_MS, persister, queryClient } from './shared/api/queryClient'
 const [, restored] = persistQueryClient({ queryClient, persister, maxAge: ONE_DAY_MS })
 await restored
 
-const router = createAppRouter()
+const router = createAppRouter(queryClient)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
