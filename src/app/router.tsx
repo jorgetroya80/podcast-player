@@ -1,8 +1,8 @@
 import { createBrowserRouter, type RouteObject } from 'react-router'
 
-import AppLayout from '../layouts/AppLayout'
+import AppLayout from './layouts/AppLayout'
+import PodcastLayout from './layouts/PodcastLayout'
 import PodcastListPage from '../pages/PodcastListPage/PodcastListPage'
-import PodcastLayout from '../layouts/PodcastLayout'
 import PodcastDetailPage from '../pages/PodcastDetailPage/PodcastDetailPage'
 import EpisodeDetailPage from '../pages/EpisodeDetailPage/EpisodeDetailPage'
 

@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router'
-import Header  from '../shared/components/Header'
+
+import Header from '../../shared/components/Header'
 
 const AppLayout = () => {
   return (
