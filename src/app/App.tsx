@@ -1,11 +1,18 @@
+import { QueryClientProvider, type QueryClient } from '@tanstack/react-query'
+import type { createAppRouter } from './router'
 import { RouterProvider } from 'react-router/dom'
 
-import { createAppRouter } from './router'
+type AppProps = {
+  router: ReturnType<typeof createAppRouter>
+  queryClient: QueryClient
+}
 
-const router = createAppRouter()
-
-function App() {
-  return <RouterProvider router={router} />
+function App({ router, queryClient }: AppProps) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  )
 }
 
 export default App
