@@ -1,5 +1,5 @@
-import reactLogo from './assets/react.svg'
-import './app/styles/index.css'
+import reactLogo from '../assets/react.svg'
+import '../app/styles/index.css'
 
 function App() {
   return (
@@ -12,7 +12,6 @@ function App() {
           <h1 className="text-2xl underline">Get started</h1>
         </div>
       </section>
-
     </>
   )
 }
