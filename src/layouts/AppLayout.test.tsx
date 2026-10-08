@@ -11,7 +11,7 @@ describe('AppLayout', () => {
     ])
     render(<RouterProvider router={router} />)
 
-    expect(screen.getByRole('banner')).toHaveTextContent('Header')
+    expect(screen.getByRole('banner')).toHaveTextContent('Podcaster')
     expect(screen.getByText('child test content')).toBeInTheDocument()
   })
 })
