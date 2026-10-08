@@ -1,0 +1,132 @@
+{
+  "feed": {
+    "author": {
+      "name": { "label": "iTunes Store" },
+      "uri": { "label": "http://www.apple.com/itunes/" }
+    },
+    "entry": [
+      {
+        "im:name": { "label": "The Joe Budden Podcast" },
+        "im:image": [
+          {
+            "label": "https://is1-ssl.mzstatic.com/image/thumb/Podcasts113/v4/f2/21/fa/f221fabd-017f-5125-633b-f1fe4f39802a/mza_182995249085044287.jpg/55x55bb.png",
+            "attributes": { "height": "55" }
+          },
+          {
+            "label": "https://is1-ssl.mzstatic.com/image/thumb/Podcasts113/v4/f2/21/fa/f221fabd-017f-5125-633b-f1fe4f39802a/mza_182995249085044287.jpg/60x60bb.png",
+            "attributes": { "height": "60" }
+          },
+          {
+            "label": "https://is1-ssl.mzstatic.com/image/thumb/Podcasts113/v4/f2/21/fa/f221fabd-017f-5125-633b-f1fe4f39802a/mza_182995249085044287.jpg/170x170bb.png",
+            "attributes": { "height": "170" }
+          }
+        ],
+        "summary": {
+          "label": "Tune into Joe Budden and his friends. Follow along the crazy adventures of these very random friends."
+        },
+        "im:price": { "label": "Get", "attributes": { "amount": "0", "currency": "USD" } },
+        "im:contentType": { "attributes": { "term": "Podcast", "label": "Podcast" } },
+        "rights": { "label": "© All rights reserved" },
+        "title": { "label": "The Joe Budden Podcast - The Joe Budden Network" },
+        "link": {
+          "attributes": {
+            "rel": "alternate",
+            "type": "text/html",
+            "href": "https://podcasts.apple.com/us/podcast/the-joe-budden-podcast/id1535809341?uo=2"
+          }
+        },
+        "id": {
+          "label": "https://podcasts.apple.com/us/podcast/the-joe-budden-podcast/id1535809341?uo=2",
+          "attributes": { "im:id": "1535809341" }
+        },
+        "im:artist": {
+          "label": "The Joe Budden Network",
+          "attributes": {
+            "href": "https://podcasts.apple.com/us/artist/the-joe-budden-network/1535844019?uo=2"
+          }
+        },
+        "category": {
+          "attributes": {
+            "im:id": "1310",
+            "term": "Music",
+            "scheme": "https://podcasts.apple.com/us/genre/podcasts-music/id1310?uo=2",
+            "label": "Music"
+          }
+        },
+        "im:releaseDate": {
+          "label": "2026-10-07T02:00:00-07:00",
+          "attributes": { "label": "October 7, 2026" }
+        }
+      },
+      {
+        "im:name": { "label": "Tony Mantor's : Almost Live..... Nashville" },
+        "im:image": [
+          {
+            "label": "https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/13/61/db/1361db29-4ef7-6c00-dfc6-57101ff6ac8b/mza_667531997147998547.jpg/55x55bb.png",
+            "attributes": { "height": "55" }
+          },
+          {
+            "label": "https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/13/61/db/1361db29-4ef7-6c00-dfc6-57101ff6ac8b/mza_667531997147998547.jpg/60x60bb.png",
+            "attributes": { "height": "60" }
+          },
+          {
+            "label": "https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/13/61/db/1361db29-4ef7-6c00-dfc6-57101ff6ac8b/mza_667531997147998547.jpg/170x170bb.png",
+            "attributes": { "height": "170" }
+          }
+        ],
+        "summary": {
+          "label": "Nashville based veteran music producer Tony Mantor’s Almost Live… Nashville podcast takes its listener on a journey through the business of music and entertainment. Following the success and popularity of his top-rated podcast on Autism & Mental Health awareness - Why Not Me? - Mantor hosts thought-provoking conversations and behind-the-scenes stories from various celebrity guests from the world of music, television and entertainment. With more than 30 years as an accomplished music producer based in Nashville, Mantor welcomes a worldly guest list of musicians, actors and entertainers who share their unique stories about the roles they’ve played in creating and sustaining what we know as popular American culture. Conversations and stories that also give a deeper understanding on what it takes to achieve success in the entertainment industry for aspiring entertainers who are currently pursuing their own dreams of being a star someday. Whether listening for the entertainment or storytelling factor alone, or for tips on how his guests faced their life’s challenges, Almost Live… Nashville will have a story for anyone who has been a fan of popular culture in music, movies and television over the last few decades."
+        },
+        "im:price": { "label": "Get", "attributes": { "amount": "0", "currency": "USD" } },
+        "im:contentType": { "attributes": { "term": "Podcast", "label": "Podcast" } },
+        "rights": {
+          "label": "2026 iHeartMedia, Inc. © Any use of this intellectual property for text and data mining or computational analysis including as training material for artificial intelligence systems is strictly prohibited without express written consent from iHeartMedia"
+        },
+        "title": { "label": "Tony Mantor's : Almost Live..... Nashville - iHeartPodcasts" },
+        "link": {
+          "attributes": {
+            "rel": "alternate",
+            "type": "text/html",
+            "href": "https://podcasts.apple.com/us/podcast/tony-mantors-almost-live-nashville/id1751194045?uo=2"
+          }
+        },
+        "id": {
+          "label": "https://podcasts.apple.com/us/podcast/tony-mantors-almost-live-nashville/id1751194045?uo=2",
+          "attributes": { "im:id": "1751194045" }
+        },
+        "im:artist": { "label": "iHeartPodcasts" },
+        "category": {
+          "attributes": {
+            "im:id": "1525",
+            "term": "Music Interviews",
+            "scheme": "https://podcasts.apple.com/us/genre/podcasts-music-music-interviews/id1525?uo=2",
+            "label": "Music Interviews"
+          }
+        },
+        "im:releaseDate": {
+          "label": "2026-10-06T15:00:00-07:00",
+          "attributes": { "label": "October 6, 2026" }
+        }
+      }
+    ],
+    "rights": { "label": "Copyright 2008 Apple Inc." },
+    "title": { "label": "iTunes Store: Top Podcasts in Music" },
+    "icon": { "label": "http://itunes.apple.com/favicon.ico" },
+    "link": [
+      {
+        "attributes": {
+          "rel": "alternate",
+          "type": "text/html",
+          "href": "https://podcasts.apple.com/WebObjects/MZStore.woa/wa/viewTop?cc=us&id=179537&popId=3"
+        }
+      },
+      {
+        "attributes": {
+          "rel": "self",
+          "href": "https://itunes.apple.com/us/rss/toppodcasts/limit=2/genre=1310/json"
+        }
+      }
+    ],
+    "id": { "label": "https://itunes.apple.com/us/rss/toppodcasts/limit=2/genre=1310/json" }
+  }
+}
