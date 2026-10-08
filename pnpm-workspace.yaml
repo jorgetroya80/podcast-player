@@ -1,2 +1,8 @@
 allowBuilds:
   msw: true
+minimumReleaseAgeExclude:
+  - '@tanstack/query-core@5.104.1'
+  - '@tanstack/query-persist-client-core@5.104.1'
+  - '@tanstack/query-sync-storage-persister@5.104.1'
+  - '@tanstack/react-query-persist-client@5.104.1'
+  - '@tanstack/react-query@5.104.1'
