@@ -16,7 +16,7 @@ const EpisodeDetailPage = () => {
   const duration = formatDuration(episode.durationMs)
 
   return (
-    <article className="flex flex-col gap-2">
+    <article className="flex flex-col gap-2 rounded border border-gray-200 px-4 py-6 shadow-sm">
       <h1 className="text-2xl font-bold">{episode.title}</h1>
       <p className="text-sm text-gray-600">
         <span>Released: {formatDate(episode.releasedAt)}</span>
@@ -28,7 +28,9 @@ const EpisodeDetailPage = () => {
         )}
       </p>
       <EpisodeDescription html={episode.description} />
-      <EpisodePlayer title={episode.title} src={episode.audioUrl} />
+      <div className="mt-8">
+        <EpisodePlayer title={episode.title} src={episode.audioUrl} />
+      </div>
     </article>
   )
 }
