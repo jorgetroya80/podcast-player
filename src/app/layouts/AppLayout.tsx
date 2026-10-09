@@ -1,13 +1,13 @@
 import { Outlet } from 'react-router'
 
 import Header from '../../shared/components/Header'
-import NavigationIndicator from '../../shared/components/NavigationIndicator'
+import RouteLoadingIndicator from '../../shared/components/RouteLoadingIndicator'
 
 const AppLayout = () => {
   return (
     <div className="mx-auto max-w-7xl">
       <Header />
-      <NavigationIndicator />
+      <RouteLoadingIndicator />
       <main>
         <Outlet />
       </main>
