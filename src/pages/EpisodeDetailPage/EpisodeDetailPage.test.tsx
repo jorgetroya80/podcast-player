@@ -63,6 +63,31 @@ describe('EpisodeDetailPage', () => {
     expect(screen.queryByText(/Duration/)).not.toBeInTheDocument()
   })
 
+  it('shows the audio player for an episode with audio', async () => {
+    const { container } = renderAt(episodePath(PODCAST_ID))
+
+    await screen.findByRole('heading', { level: 1, name: EPISODE_TITLE })
+    const audio = container.querySelector('audio')
+    expect(audio).toHaveAttribute('src', podcastDetails.results[1].episodeUrl)
+    expect(screen.queryByText('Audio not available for this episode.')).not.toBeInTheDocument()
+  })
+
+  it('shows a message instead of the player when the episode has no audio', async () => {
+    const [podcast, episode] = podcastDetails.results
+    const withoutAudio: Record<string, unknown> = { ...episode }
+    delete withoutAudio.episodeUrl
+    server.use(
+      http.get(LOOKUP, () =>
+        HttpResponse.json({ resultCount: 2, results: [podcast, withoutAudio] }),
+      ),
+    )
+
+    const { container } = renderAt(episodePath(PODCAST_ID))
+
+    expect(await screen.findByText('Audio not available for this episode.')).toBeInTheDocument()
+    expect(container.querySelector('audio')).not.toBeInTheDocument()
+  })
+
   it('shows "Episode not found." keeping sidebar and header, and logs once', async () => {
     renderAt(episodePath(PODCAST_ID, 'unknown'))
 
