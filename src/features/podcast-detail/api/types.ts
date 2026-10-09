@@ -11,8 +11,8 @@ export type LookupEpisode = {
   kind: 'podcast-episode'
   trackId: number
   trackName: string
-  description: string
-  episodeUrl: string
+  description?: string
+  episodeUrl?: string
   trackTimeMillis?: number
   releaseDate: string
 }

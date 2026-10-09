@@ -33,6 +33,36 @@ describe('mapPodcastDetail', () => {
     expect(detail?.episodes[0].durationMs).toBeUndefined()
   })
 
+  it('maps description and audioUrl when present', () => {
+    const [, episode] = response.results as [LookupPodcast, LookupEpisode]
+    const detail = mapPodcastDetail(response)
+
+    expect(detail?.episodes[0].description).toBe(episode.description)
+    expect(detail?.episodes[0].audioUrl).toBe(episode.episodeUrl)
+    expect(detail?.episodes[0].description).toBeTruthy()
+    expect(detail?.episodes[0].audioUrl).toBeTruthy()
+  })
+
+  it('leaves description undefined when the episode has no description field', () => {
+    const [podcast, episode] = response.results as [LookupPodcast, LookupEpisode]
+
+    const detail = mapPodcastDetail({
+      results: [podcast, { ...episode, description: undefined }],
+    })
+
+    expect(detail?.episodes[0].description).toBeUndefined()
+  })
+
+  it('leaves audioUrl undefined when the episode has no episodeUrl field', () => {
+    const [podcast, episode] = response.results as [LookupPodcast, LookupEpisode]
+
+    const detail = mapPodcastDetail({
+      results: [podcast, { ...episode, episodeUrl: undefined }],
+    })
+
+    expect(detail?.episodes[0].audioUrl).toBeUndefined()
+  })
+
   it('returns an empty episode list when the podcast has no episodes', () => {
     const [podcast] = response.results
 

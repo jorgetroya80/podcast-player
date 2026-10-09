@@ -9,8 +9,8 @@ export type Podcast = {
 export type Episode = {
   id: string // trackId
   title: string // trackName
-  description: string // description (HTML). Sanitize before injecting (v0.6)
-  audioUrl: string // episodeUrl
+  description?: string // description (HTML, can be missing). Sanitize before injecting (v0.6)
+  audioUrl?: string // episodeUrl (can be missing)
   durationMs?: number // trackTimeMillis (can be missing)
   releasedAt: string // releaseDate (ISO 8601)
 }
