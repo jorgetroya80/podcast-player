@@ -11,16 +11,19 @@ const renderAt = (path: string) => renderRoutes(routes, { route: path })
 describe('routes', () => {
   it('shows the skeleton while the first load is pending, then the list', async () => {
     renderAt('/')
-    expect(screen.getByRole('status')).toBeInTheDocument()
+    expect(screen.getByRole('status', { name: 'Loading podcasts' })).toBeInTheDocument()
     expect(await screen.findByRole('search')).toBeInTheDocument()
   })
 
-  it.each([
-    ['/podcast/1', /podcast detail/i],
-    ['/podcast/1/episode/2', /episode detail/i],
-  ])('renders the right page at %s', async (path, heading) => {
-    renderAt(path)
-    expect(await screen.findByRole('heading', { name: heading })).toBeInTheDocument()
+  it('renders the podcast detail page at /podcast/:id', async () => {
+    renderAt('/podcast/1')
+    expect(await screen.findByText(/^Episodes: /)).toBeInTheDocument()
+    expect(await screen.findByRole('table')).toBeInTheDocument()
+  })
+
+  it('renders the episode page at /podcast/:id/episode/:episodeId', async () => {
+    renderAt('/podcast/1/episode/2')
+    expect(await screen.findByRole('heading', { name: /episode detail/i })).toBeInTheDocument()
   })
 
   it('shows the error and keeps the header when the podcasts request fails', async () => {
