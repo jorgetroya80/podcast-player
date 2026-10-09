@@ -9,6 +9,7 @@ export const createQueryClient = () =>
       queries: {
         staleTime: ONE_DAY_MS,
         gcTime: ONE_DAY_MS,
+        retry: false,
       },
     },
   })
