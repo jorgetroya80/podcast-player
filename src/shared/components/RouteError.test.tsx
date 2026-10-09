@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { createMemoryRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 
+import { NotFoundError } from '../api/NotFoundError'
 import RouteError from './RouteError'
 
 const renderWithLoaderError = (loader: () => never) => {
@@ -34,5 +35,13 @@ describe('RouteError', () => {
     })
 
     expect(await screen.findByRole('alert')).toHaveTextContent(/page not found/i)
+  })
+
+  it('shows the message of a NotFoundError', async () => {
+    renderWithLoaderError(() => {
+      throw new NotFoundError('Podcast not found')
+    })
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Podcast not found.')
   })
 })
