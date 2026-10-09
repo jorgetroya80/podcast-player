@@ -101,9 +101,11 @@ describe('PodcastLayout', () => {
     const sidebar = await screen.findByRole('complementary')
     await screen.findByText(/^Episodes: /)
 
-    await act(() => router.navigate(`/podcast/${LISTED_ID}/episode/2`))
+    await act(() => router.navigate(`/podcast/${LISTED_ID}/episode/1000793367564`))
 
-    expect(await screen.findByRole('heading', { name: /episode detail/i })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { name: 'Has Taylor Swift jumped the shark?' }),
+    ).toBeInTheDocument()
     expect(screen.getByRole('complementary')).toBe(sidebar)
   })
 

@@ -50,7 +50,9 @@ describe('PodcastDetailPage', () => {
 
     await user.click(await screen.findByRole('link', { name: EPISODE_TITLE }))
 
-    expect(await screen.findByRole('heading', { name: 'Episode Detail' })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { name: EPISODE_TITLE, level: 1 }),
+    ).toBeInTheDocument()
     expect(screen.getByRole('complementary')).toBe(sidebar)
   })
 
