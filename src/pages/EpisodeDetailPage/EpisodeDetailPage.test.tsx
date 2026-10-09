@@ -97,6 +97,10 @@ describe('EpisodeDetailPage', () => {
     expect(screen.queryByRole('article')).not.toBeInTheDocument()
     expect(screen.queryByText(EPISODE_TITLE)).not.toBeInTheDocument()
     expect(consoleError).toHaveBeenCalledTimes(1)
+    expect(consoleError).toHaveBeenCalledWith('Episode not found:', {
+      podcastId: PODCAST_ID,
+      episodeId: 'unknown',
+    })
   })
 
   it('shows "Episode not found." when the detail has no results', async () => {
@@ -128,5 +132,181 @@ describe('EpisodeDetailPage', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(/something went wrong/i)
     expect(screen.getByRole('banner')).toHaveTextContent('Podcaster')
     expect(consoleError).toHaveBeenCalled()
+  })
+
+  describe('description', () => {
+    const withDescription = (description?: string) => {
+      const [podcast, episode] = podcastDetails.results
+      const changed: Record<string, unknown> = { ...episode }
+      if (description === undefined) delete changed.description
+      else changed.description = description
+      server.use(
+        http.get(LOOKUP, () => HttpResponse.json({ resultCount: 2, results: [podcast, changed] })),
+      )
+    }
+
+    it('shows the formatted description', async () => {
+      withDescription('<p>Hello <b>brave</b> world</p>')
+
+      const { container } = renderAt(episodePath(PODCAST_ID))
+
+      expect(await screen.findByText('brave')).toBeVisible()
+      expect(container.querySelector('article b')).toHaveTextContent('brave')
+      expect(screen.getByText('world', { exact: false })).toBeVisible()
+    })
+
+    it('renders the description without scripts or event handlers', async () => {
+      withDescription(
+        '<p>Safe text</p><script>alert(1)</script><img src="x.png" onerror="alert(1)">',
+      )
+
+      const { container } = renderAt(episodePath(PODCAST_ID))
+
+      expect(await screen.findByText('Safe text')).toBeVisible()
+      expect(container.querySelector('script')).not.toBeInTheDocument()
+      expect(container.querySelector('[onerror]')).not.toBeInTheDocument()
+      expect(container).not.toHaveTextContent('alert(1)')
+    })
+
+    it('renders no description block when the episode has no description', async () => {
+      withDescription(undefined)
+
+      const { container } = renderAt(episodePath(PODCAST_ID))
+
+      await screen.findByRole('heading', { level: 1, name: EPISODE_TITLE })
+      expect(container.querySelector('article section')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('complete and minimal episodes', () => {
+    const serveEpisode = (omit: string[] = []) => {
+      const [podcast, episode] = podcastDetails.results
+      const changed: Record<string, unknown> = {
+        ...episode,
+        description: '<p>Full <b>description</b></p>',
+      }
+      for (const key of omit) delete changed[key]
+      server.use(
+        http.get(LOOKUP, () => HttpResponse.json({ resultCount: 2, results: [podcast, changed] })),
+      )
+    }
+
+    it('shows title, date, duration, player and description together', async () => {
+      serveEpisode()
+
+      const { container } = renderAt(episodePath(PODCAST_ID))
+
+      const article = await screen.findByRole('article')
+      expect(within(article).getByRole('heading', { level: 1, name: EPISODE_TITLE })).toBeVisible()
+      expect(within(article).getByText('Released: 06/10/2026')).toBeInTheDocument()
+      expect(within(article).getByText('Duration: 47:55')).toBeInTheDocument()
+      expect(container.querySelector('article audio')).toHaveAttribute(
+        'src',
+        podcastDetails.results[1].episodeUrl,
+      )
+      expect(within(article).getByText('description')).toBeVisible()
+      expect(consoleError).not.toHaveBeenCalled()
+    })
+
+    it.each([
+      ['duration', ['trackTimeMillis']],
+      ['audio', ['episodeUrl']],
+      ['description', ['description']],
+    ])('renders the rest of the episode without %s', async (_part, omit) => {
+      serveEpisode(omit)
+
+      renderAt(episodePath(PODCAST_ID))
+
+      const article = await screen.findByRole('article')
+      expect(within(article).getByRole('heading', { level: 1, name: EPISODE_TITLE })).toBeVisible()
+      expect(within(article).getByText('Released: 06/10/2026')).toBeInTheDocument()
+    })
+
+    it('renders just title, date and the audio message without any optional part', async () => {
+      serveEpisode(['trackTimeMillis', 'episodeUrl', 'description'])
+
+      const { container } = renderAt(episodePath(PODCAST_ID))
+
+      const article = await screen.findByRole('article')
+      expect(within(article).getByRole('heading', { level: 1, name: EPISODE_TITLE })).toBeVisible()
+      expect(within(article).getByText('Released: 06/10/2026')).toBeInTheDocument()
+      expect(within(article).getByText('Audio not available for this episode.')).toBeVisible()
+      expect(within(article).queryByText(/Duration/)).not.toBeInTheDocument()
+      expect(within(article).queryByRole('heading', { level: 2 })).not.toBeInTheDocument()
+      expect(container.querySelector('audio')).not.toBeInTheDocument()
+      expect(consoleError).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('sidebar links', () => {
+    const withPodcastId = (podcastId: string) => {
+      const [podcast, episode] = podcastDetails.results
+      const id = Number(podcastId)
+      server.use(
+        http.get(LOOKUP, () =>
+          HttpResponse.json({
+            resultCount: 2,
+            results: [
+              { ...podcast, collectionId: id, trackId: id },
+              { ...episode, collectionId: id },
+            ],
+          }),
+        ),
+      )
+    }
+
+    const sidebarLinks = (sidebar: HTMLElement, name: string, artist: string) => ({
+      image: within(sidebar).getByRole('img', { name }).closest('a') as HTMLElement,
+      title: within(within(sidebar).getByRole('heading', { name })).getByRole('link'),
+      author: within(sidebar).getByRole('link', { name: `by ${artist}` }),
+    })
+
+    it.each([
+      ['listed', LISTED_ID, 'The Joe Budden Podcast', 'The Joe Budden Network'],
+      ['unlisted', PODCAST_ID, 'Switched on Pop', 'Vulture'],
+    ])('links image, title and author to the %s podcast', async (_kind, id, name, artist) => {
+      withPodcastId(id)
+      renderAt(episodePath(id))
+      await screen.findByRole('heading', { level: 1, name: EPISODE_TITLE })
+
+      const links = sidebarLinks(screen.getByRole('complementary'), name, artist)
+
+      expect(Object.values(links)).toHaveLength(3)
+      for (const link of Object.values(links)) {
+        expect(link).toHaveAttribute('href', `/podcast/${id}`)
+      }
+    })
+
+    it.each([
+      ['image', LISTED_ID],
+      ['title', LISTED_ID],
+      ['author', LISTED_ID],
+      ['image', PODCAST_ID],
+      ['title', PODCAST_ID],
+      ['author', PODCAST_ID],
+    ] as const)(
+      'goes to the podcast page from the %s link (%s) keeping the sidebar',
+      async (which, id) => {
+        const listed = id === LISTED_ID
+        withPodcastId(id)
+        const user = userEvent.setup()
+        renderAt(episodePath(id))
+        await screen.findByRole('heading', { level: 1, name: EPISODE_TITLE })
+        const sidebar = screen.getByRole('complementary')
+        const links = sidebarLinks(
+          sidebar,
+          listed ? 'The Joe Budden Podcast' : 'Switched on Pop',
+          listed ? 'The Joe Budden Network' : 'Vulture',
+        )
+
+        await user.click(links[which])
+
+        expect(await screen.findByText(/^Episodes: \d+$/)).toBeInTheDocument()
+        expect(
+          screen.queryByRole('heading', { level: 1, name: EPISODE_TITLE }),
+        ).not.toBeInTheDocument()
+        expect(screen.getByRole('complementary')).toBe(sidebar)
+      },
+    )
   })
 })

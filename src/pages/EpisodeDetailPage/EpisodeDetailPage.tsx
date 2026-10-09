@@ -1,6 +1,6 @@
 import { useParams } from 'react-router'
 
-import { EpisodePlayer } from '../../features/episode-player'
+import { EpisodeDescription, EpisodePlayer } from '../../features/episode-player'
 import { findEpisode, usePodcastDetail } from '../../features/podcast-detail'
 import { formatDate } from '../../shared/utils/formatDate'
 import { formatDuration } from '../../shared/utils/formatDuration'
@@ -27,6 +27,7 @@ const EpisodeDetailPage = () => {
           </>
         )}
       </p>
+      <EpisodeDescription html={episode.description} />
       <EpisodePlayer title={episode.title} src={episode.audioUrl} />
     </article>
   )
