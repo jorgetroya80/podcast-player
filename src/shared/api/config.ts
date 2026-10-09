@@ -6,4 +6,3 @@ export const TOP_PODCASTS_URL = `https://itunes.apple.com/us/rss/toppodcasts/lim
 
 export const podcastDetailUrl = (id: string) =>
   `https://itunes.apple.com/lookup?id=${id}&media=podcast&entity=podcastEpisode&limit=${PODCASTS_DETAIL_LIMIT}`
-

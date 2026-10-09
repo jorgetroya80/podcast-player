@@ -1,8 +1,11 @@
+import { PodcastList } from '../../features/podcasts'
 
 const PodcastListPage = () => {
   return (
-      <h1>Podcast List</h1>
-  );
-};
+    <div className="p-4">
+      <PodcastList />
+    </div>
+  )
+}
 
-export default PodcastListPage;
+export default PodcastListPage
