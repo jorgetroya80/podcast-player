@@ -27,7 +27,7 @@ describe('podcastDetailQuery', () => {
     const detail = await createQueryClient().query(podcastDetailQuery('934552872'))
 
     expect(detail).toMatchObject({ id: '934552872', name: 'Switched on Pop' })
-    expect(detail.episodes).toHaveLength(1)
+    expect(detail?.episodes).toHaveLength(1)
   })
 
   it('sends the given id in the request', async () => {
@@ -107,12 +107,11 @@ describe('podcastDetailQuery', () => {
       )
     })
 
-    it('rejects with PodcastNotFoundError when there are no results', async () => {
+    it('resolves to null, without logging, when there are no results', async () => {
       server.use(http.get(LOOKUP_URL, () => HttpResponse.json({ resultCount: 0, results: [] })))
 
-      await expect(createQueryClient().query(podcastDetailQuery('1'))).rejects.toBeInstanceOf(
-        PodcastNotFoundError,
-      )
+      await expect(createQueryClient().query(podcastDetailQuery('1'))).resolves.toBeNull()
+      expect(consoleError).not.toHaveBeenCalled()
     })
   })
 })

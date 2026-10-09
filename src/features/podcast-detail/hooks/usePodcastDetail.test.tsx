@@ -67,6 +67,15 @@ describe('usePodcastDetail', () => {
     await waitFor(() => expect(result.current.isPending).toBe(false))
   })
 
+  it('settles with a null detail when iTunes has no results for the id', async () => {
+    server.use(http.get(LOOKUP_URL, () => HttpResponse.json({ resultCount: 0, results: [] })))
+
+    const { result } = renderHook(() => usePodcastDetail('9345528'), { wrapper })
+
+    await waitFor(() => expect(result.current.isPending).toBe(false))
+    expect(result.current.detail).toBeNull()
+  })
+
   describe('errors', () => {
     let consoleError: ReturnType<typeof vi.spyOn>
 
@@ -95,8 +104,8 @@ describe('usePodcastDetail', () => {
       expect(await screen.findByRole('alert')).toHaveTextContent(new HttpError(500, '').name)
     })
 
-    it('throws PodcastNotFoundError to the error boundary when there are no results', async () => {
-      server.use(http.get(LOOKUP_URL, () => HttpResponse.json({ resultCount: 0, results: [] })))
+    it('throws PodcastNotFoundError to the error boundary on a 400', async () => {
+      server.use(http.get(LOOKUP_URL, () => new HttpResponse(null, { status: 400 })))
 
       renderInBoundary()
 
