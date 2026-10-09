@@ -1,5 +1,4 @@
 import type { Episode, PodcastDetail } from '../../../shared/types'
-import { PodcastNotFoundError } from './PodcastNotFoundError'
 import type { LookupEpisode, LookupPodcast, PodcastLookupResponse } from './types'
 
 const isPodcast = (result: LookupPodcast | LookupEpisode): result is LookupPodcast =>
@@ -19,10 +18,11 @@ function mapEpisode(episode: LookupEpisode): Episode {
   }
 }
 
-function mapPodcastDetail({ results }: PodcastLookupResponse): PodcastDetail {
+// if iTunes response is 200 with an empty `results` for an unknown id: there is no detail to map.
+function mapPodcastDetail({ results }: PodcastLookupResponse): PodcastDetail | null {
   const podcast = results.find(isPodcast)
 
-  if (!podcast) throw new PodcastNotFoundError()
+  if (!podcast) return null
 
   return {
     id: String(podcast.collectionId),

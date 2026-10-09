@@ -1,6 +1,5 @@
 import type { LookupEpisode, LookupPodcast, PodcastLookupResponse } from './types'
 import { mapPodcastDetail } from './mapPodcastDetail'
-import { PodcastNotFoundError } from './PodcastNotFoundError'
 import podcastDetails from '../../../test/mocks/podcastDetails.json'
 
 const response = podcastDetails as unknown as PodcastLookupResponse
@@ -15,8 +14,8 @@ describe('mapPodcastDetail', () => {
       artist: 'Vulture',
       episodeCount: 556,
     })
-    expect(detail.episodes).toHaveLength(1)
-    expect(detail.episodes[0]).toMatchObject({
+    expect(detail?.episodes).toHaveLength(1)
+    expect(detail?.episodes[0]).toMatchObject({
       id: '1000793367564',
       title: 'Has Taylor Swift jumped the shark?',
       durationMs: 2875000,
@@ -31,25 +30,25 @@ describe('mapPodcastDetail', () => {
       results: [podcast, { ...episode, trackTimeMillis: undefined }],
     })
 
-    expect(detail.episodes[0].durationMs).toBeUndefined()
+    expect(detail?.episodes[0].durationMs).toBeUndefined()
   })
 
   it('returns an empty episode list when the podcast has no episodes', () => {
     const [podcast] = response.results
 
-    expect(mapPodcastDetail({ results: [podcast] }).episodes).toEqual([])
+    expect(mapPodcastDetail({ results: [podcast] })?.episodes).toEqual([])
   })
 
-  it('throws PodcastNotFoundError when the response has no results', () => {
-    expect(() => mapPodcastDetail({ results: [] })).toThrow(PodcastNotFoundError)
+  it('returns null when the response has no results', () => {
+    expect(mapPodcastDetail({ results: [] })).toBeNull()
   })
 
-  it('throws PodcastNotFoundError when no result is a podcast', () => {
+  it('returns null when no result is a podcast', () => {
     const [, episode] = response.results
 
-    expect(() => mapPodcastDetail({ results: [episode] })).toThrow(PodcastNotFoundError)
-    expect(() =>
+    expect(mapPodcastDetail({ results: [episode] })).toBeNull()
+    expect(
       mapPodcastDetail({ results: [{ kind: 'song' }] } as unknown as PodcastLookupResponse),
-    ).toThrow(PodcastNotFoundError)
+    ).toBeNull()
   })
 })
