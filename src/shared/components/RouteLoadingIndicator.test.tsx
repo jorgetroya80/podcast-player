@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { createMemoryRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 
@@ -29,11 +29,13 @@ describe('RouteLoadingIndicator', () => {
     let resolve!: () => void
     const router = renderApp(() => new Promise((r) => (resolve = () => r(null))))
 
-    void router.navigate('/slow')
+    await act(async () => {
+      void router.navigate('/slow')
+    })
 
     expect(await screen.findByRole('status')).toBeInTheDocument()
 
-    resolve()
+    await act(async () => resolve())
 
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument())
   })

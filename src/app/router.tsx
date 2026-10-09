@@ -6,7 +6,7 @@ import PodcastLayout from './layouts/PodcastLayout'
 import PodcastListPage from '../pages/PodcastListPage/PodcastListPage'
 import PodcastDetailPage from '../pages/PodcastDetailPage/PodcastDetailPage'
 import EpisodeDetailPage from '../pages/EpisodeDetailPage/EpisodeDetailPage'
-import { podcastsQuery } from '../features/podcasts'
+import { podcastsQuery, PodcastListSkeleton } from '../features/podcasts'
 import RouteError from '../shared/components/RouteError'
 
 export const routes = (queryClient: QueryClient): RouteObject[] => [
@@ -19,6 +19,7 @@ export const routes = (queryClient: QueryClient): RouteObject[] => [
           {
             path: '/',
             element: <PodcastListPage />,
+            HydrateFallback: PodcastListSkeleton,
             loader: () => queryClient.query(podcastsQuery),
           },
           {

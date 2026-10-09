@@ -9,8 +9,9 @@ import { renderRoutes } from '../test/renderWithProviders'
 const renderAt = (path: string) => renderRoutes(routes, { route: path })
 
 describe('routes', () => {
-  it('renders the podcast list at /', async () => {
+  it('shows the skeleton while the first load is pending, then the list', async () => {
     renderAt('/')
+    expect(screen.getByRole('status')).toBeInTheDocument()
     expect(await screen.findByRole('search')).toBeInTheDocument()
   })
 
@@ -23,7 +24,7 @@ describe('routes', () => {
   })
 
   it('shows the error and keeps the header when the podcasts request fails', async () => {
-    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => vi.fn())
     server.use(http.get(TOP_PODCASTS_URL, () => new HttpResponse(null, { status: 500 })))
 
     renderAt('/')

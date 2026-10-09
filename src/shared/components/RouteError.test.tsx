@@ -6,7 +6,13 @@ import RouteError from './RouteError'
 
 const renderWithLoaderError = (loader: () => never) => {
   const router = createMemoryRouter([
-    { path: '/', loader, element: <p>ok</p>, errorElement: <RouteError /> },
+    {
+      path: '/',
+      loader,
+      element: <p>ok</p>,
+      errorElement: <RouteError />,
+      HydrateFallback: () => null,
+    },
   ])
   render(<RouterProvider router={router} />)
 }
