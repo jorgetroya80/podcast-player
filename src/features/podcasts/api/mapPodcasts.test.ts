@@ -14,4 +14,13 @@ describe('mapPodcasts', () => {
     expect(podcasts[0].image).toMatch(/170x170bb\.png$/)
     expect(podcasts[0].summary).toMatch(/^Tune into Joe Budden/)
   })
+
+  it('falls back to an empty image when the entry is missing', () => {
+    const [entry] = podcastList.feed.entry
+    const response = {
+      feed: { entry: [{ ...entry, 'im:image': entry['im:image'].slice(0, 1) }] },
+    }
+
+    expect(mapPodcasts(response)[0].image).toBe('')
+  })
 })
