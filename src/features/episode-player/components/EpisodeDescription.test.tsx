@@ -85,4 +85,21 @@ describe('EpisodeDescription', () => {
     expect(screen.getByText('second')).toBeInTheDocument()
     expect(screen.queryByText('first')).not.toBeInTheDocument()
   })
+
+  it('renders plain text as paragraphs, with single line breaks kept', () => {
+    const { container } = render(
+      <EpisodeDescription html={'Intro.\n\n\n\nSecond.\nSame paragraph.\n\nThird.'} />,
+    )
+
+    const paragraphs = container.querySelectorAll('p')
+    expect(paragraphs).toHaveLength(3)
+    expect(paragraphs[1].querySelector('br')).toBeInTheDocument()
+    expect(paragraphs[1]).toHaveTextContent('Second.Same paragraph.')
+  })
+
+  it('escapes plain text instead of interpreting it as markup', () => {
+    const { container } = render(<EpisodeDescription html={'I <3 Q&A'} />)
+
+    expect(container.querySelector('p')?.textContent).toBe('I <3 Q&A')
+  })
 })
