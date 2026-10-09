@@ -1,4 +1,5 @@
 export type LookupPodcast = {
+  kind: 'podcast'
   collectionId: number
   collectionName: string
   artistName: string
@@ -7,6 +8,7 @@ export type LookupPodcast = {
 }
 
 export type LookupEpisode = {
+  kind: 'podcast-episode'
   trackId: number
   trackName: string
   description: string
@@ -16,5 +18,5 @@ export type LookupEpisode = {
 }
 
 export type PodcastLookupResponse = {
-  results: [LookupPodcast, ...LookupEpisode[]]
+  results: (LookupPodcast | LookupEpisode)[]
 }

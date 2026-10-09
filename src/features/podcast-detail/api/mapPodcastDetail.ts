@@ -1,5 +1,12 @@
 import type { Episode, PodcastDetail } from '../../../shared/types'
-import type { LookupEpisode, PodcastLookupResponse } from './types'
+import { PodcastNotFoundError } from './PodcastNotFoundError'
+import type { LookupEpisode, LookupPodcast, PodcastLookupResponse } from './types'
+
+const isPodcast = (result: LookupPodcast | LookupEpisode): result is LookupPodcast =>
+  result.kind === 'podcast'
+
+const isEpisode = (result: LookupPodcast | LookupEpisode): result is LookupEpisode =>
+  result.kind === 'podcast-episode'
 
 function mapEpisode(episode: LookupEpisode): Episode {
   return {
@@ -13,7 +20,9 @@ function mapEpisode(episode: LookupEpisode): Episode {
 }
 
 function mapPodcastDetail({ results }: PodcastLookupResponse): PodcastDetail {
-  const [podcast, ...episodes] = results
+  const podcast = results.find(isPodcast)
+
+  if (!podcast) throw new PodcastNotFoundError()
 
   return {
     id: String(podcast.collectionId),
@@ -21,7 +30,7 @@ function mapPodcastDetail({ results }: PodcastLookupResponse): PodcastDetail {
     artist: podcast.artistName,
     image: podcast.artworkUrl600,
     episodeCount: podcast.trackCount,
-    episodes: episodes.map(mapEpisode),
+    episodes: results.filter(isEpisode).map(mapEpisode),
   }
 }
 
