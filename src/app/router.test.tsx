@@ -22,8 +22,10 @@ describe('routes', () => {
   })
 
   it('renders the episode page at /podcast/:id/episode/:episodeId', async () => {
-    renderAt('/podcast/1/episode/2')
-    expect(await screen.findByRole('heading', { name: /episode detail/i })).toBeInTheDocument()
+    renderAt('/podcast/1/episode/1000793367564')
+    expect(
+      await screen.findByRole('heading', { name: 'Has Taylor Swift jumped the shark?' }),
+    ).toBeInTheDocument()
   })
 
   it('shows the error and keeps the header when the podcasts request fails', async () => {
