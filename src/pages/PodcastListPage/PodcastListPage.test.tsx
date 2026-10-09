@@ -30,6 +30,6 @@ describe('PodcastListPage', () => {
 
     await userEvent.click(await screen.findByRole('link', { name: /The Joe Budden Podcast/ }))
 
-    expect(await screen.findByRole('heading', { name: /podcast detail/i })).toBeInTheDocument()
+    expect(await screen.findByText(/^Episodes: /)).toBeInTheDocument()
   })
 })
