@@ -6,23 +6,29 @@ import PodcastLayout from './layouts/PodcastLayout'
 import PodcastListPage from '../pages/PodcastListPage/PodcastListPage'
 import PodcastDetailPage from '../pages/PodcastDetailPage/PodcastDetailPage'
 import EpisodeDetailPage from '../pages/EpisodeDetailPage/EpisodeDetailPage'
-import { podcastsQuery } from '../features/podcasts/api/podcastsQuery'
+import { podcastsQuery } from '../features/podcasts'
+import RouteError from '../shared/components/RouteError'
 
 export const routes = (queryClient: QueryClient): RouteObject[] => [
   {
     element: <AppLayout />,
     children: [
       {
-        path: '/',
-        element: <PodcastListPage />,
-        loader: () => queryClient.query(podcastsQuery),
-      },
-      {
-        path: 'podcast/:podcastId',
-        element: <PodcastLayout />,
+        errorElement: <RouteError />,
         children: [
-          { index: true, element: <PodcastDetailPage /> },
-          { path: 'episode/:episodeId', element: <EpisodeDetailPage /> },
+          {
+            path: '/',
+            element: <PodcastListPage />,
+            loader: () => queryClient.query(podcastsQuery),
+          },
+          {
+            path: 'podcast/:podcastId',
+            element: <PodcastLayout />,
+            children: [
+              { index: true, element: <PodcastDetailPage /> },
+              { path: 'episode/:episodeId', element: <EpisodeDetailPage /> },
+            ],
+          },
         ],
       },
     ],
