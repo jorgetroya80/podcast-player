@@ -35,6 +35,11 @@ const episodeLoader = async (queryClient: QueryClient, { podcastId, episodeId }:
   return null
 }
 
+// The empty element and HydrateFallback only silence React Router's warnings: the loader always throws.
+const notFoundLoader = () => {
+  throw new Response('Not Found', { status: 404 })
+}
+
 export const routes = (queryClient: QueryClient): RouteObject[] => [
   {
     element: <AppLayout />,
@@ -63,6 +68,7 @@ export const routes = (queryClient: QueryClient): RouteObject[] => [
               },
             ],
           },
+          { path: '*', element: <></>, loader: notFoundLoader, HydrateFallback: () => null },
         ],
       },
     ],
