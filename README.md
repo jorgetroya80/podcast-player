@@ -179,7 +179,7 @@ page ─▶ feature hook ─▶ TanStack Query ─▶ getJson ─▶ buildReques
   - _Interface segregation:_ components take only what they use, for example `PodcastCard` receives `id`, `name`, `artist` and `image`, not a whole `Podcast`.
   - _Dependency inversion:_ containers depend on hooks (`usePodcasts`, `usePodcastDetail`), not on `fetch`. Tests replace the network with MSW.
 - **Composition in the `app` layer.** `PodcastLayout` is the only place that combines two features (the cached podcast list and the podcast detail). Features stay independent.
-- **Typed error hierarchy.** `HttpError` (carries the status) and `NotFoundError` (user-facing message) live in `shared`. Features extend them (`PodcastNotFoundError`, `EpisodeNotFoundError`), so the shared error screen can render them without knowing the features.
+- **Small typed errors.** `HttpError` (carries the status) and `NotFoundError` (carries a user-facing message) live in `shared`. Features throw them directly (`new NotFoundError('Podcast not found')`), so the shared error screen can render them without knowing the features and there is one class per kind of failure, not one per feature.
 - **Pure functions for logic.** `filterPodcasts`, `formatDate`, `formatDuration`, `plainTextToHtml` and `findEpisode` have no side effects and are tested in isolation.
 
 ## Design decisions
