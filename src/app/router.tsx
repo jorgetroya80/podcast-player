@@ -7,12 +7,8 @@ import PodcastListPage from '../pages/PodcastListPage/PodcastListPage'
 import PodcastDetailPage from '../pages/PodcastDetailPage/PodcastDetailPage'
 import EpisodeDetailPage from '../pages/EpisodeDetailPage/EpisodeDetailPage'
 import { podcastsQuery, PodcastListSkeleton } from '../features/podcasts'
-import {
-  EpisodeNotFoundError,
-  EpisodeTableSkeleton,
-  findEpisode,
-  podcastDetailQuery,
-} from '../features/podcast-detail'
+import { EpisodeTableSkeleton, findEpisode, podcastDetailQuery } from '../features/podcast-detail'
+import { NotFoundError } from '../shared/api/NotFoundError'
 import RouteError from '../shared/components/RouteError'
 
 // Waits for the podcast list so the sidebar can render at once from the cache. If the list fails
@@ -30,7 +26,7 @@ const episodeLoader = async (queryClient: QueryClient, { podcastId, episodeId }:
   const detail = await queryClient.query(podcastDetailQuery(podcastId))
   if (!findEpisode(detail, episodeId)) {
     console.error('Episode not found:', { podcastId, episodeId })
-    throw new EpisodeNotFoundError()
+    throw new NotFoundError('Episode not found')
   }
   return null
 }
