@@ -2,10 +2,10 @@ import { http, HttpResponse } from 'msw'
 
 import { createQueryClient, ONE_DAY_MS } from '../../../shared/api/queryClient'
 import { HttpError } from '../../../shared/api/HttpError'
+import { NotFoundError } from '../../../shared/api/NotFoundError'
 import podcastDetails from '../../../test/mocks/podcastDetails.json'
 import { server } from '../../../test/mocks/server'
 
-import { PodcastNotFoundError } from './PodcastNotFoundError'
 import { podcastDetailQuery } from './podcastDetailQuery'
 
 const LOOKUP_URL = 'https://itunes.apple.com/lookup'
@@ -99,12 +99,13 @@ describe('podcastDetailQuery', () => {
       expect(consoleError).toHaveBeenCalled()
     })
 
-    it('rejects with PodcastNotFoundError when iTunes answers 400 for an invalid id', async () => {
+    it('rejects with a NotFoundError when iTunes answers 400 for an invalid id', async () => {
       server.use(http.get(LOOKUP_URL, () => new HttpResponse(null, { status: 400 })))
 
-      await expect(createQueryClient().query(podcastDetailQuery('abc'))).rejects.toBeInstanceOf(
-        PodcastNotFoundError,
-      )
+      const result = createQueryClient().query(podcastDetailQuery('abc'))
+
+      await expect(result).rejects.toBeInstanceOf(NotFoundError)
+      await expect(result).rejects.toThrow('Podcast not found')
     })
 
     it('resolves to null, without logging, when there are no results', async () => {

@@ -4,10 +4,10 @@ import { http, HttpResponse } from 'msw'
 import { Component, type ReactNode } from 'react'
 
 import { HttpError } from '../../../shared/api/HttpError'
+import { NotFoundError } from '../../../shared/api/NotFoundError'
 import podcastDetails from '../../../test/mocks/podcastDetails.json'
 import { server } from '../../../test/mocks/server'
 import { createTestQueryClient } from '../../../test/renderWithProviders'
-import { PodcastNotFoundError } from '../api/PodcastNotFoundError'
 import { usePodcastDetail } from './usePodcastDetail'
 
 const LOOKUP_URL = 'https://itunes.apple.com/lookup'
@@ -104,12 +104,12 @@ describe('usePodcastDetail', () => {
       expect(await screen.findByRole('alert')).toHaveTextContent(new HttpError(500, '').name)
     })
 
-    it('throws PodcastNotFoundError to the error boundary on a 400', async () => {
+    it('throws a NotFoundError to the error boundary on a 400', async () => {
       server.use(http.get(LOOKUP_URL, () => new HttpResponse(null, { status: 400 })))
 
       renderInBoundary()
 
-      expect(await screen.findByRole('alert')).toHaveTextContent(new PodcastNotFoundError().name)
+      expect(await screen.findByRole('alert')).toHaveTextContent(new NotFoundError().name)
     })
   })
 })
