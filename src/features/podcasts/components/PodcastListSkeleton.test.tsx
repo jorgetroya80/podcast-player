@@ -9,13 +9,14 @@ describe('PodcastListSkeleton', () => {
 
     expect(screen.getByRole('status')).toHaveAttribute('aria-busy', 'true')
     expect(screen.getAllByTestId('podcast-skeleton')).toHaveLength(10)
+    expect(screen.getAllByRole('listitem')).toHaveLength(10)
   })
 
   it('lays out the placeholders with the real PodcastGrid classes', () => {
     render(<PodcastListSkeleton />)
     const { container } = render(
       <PodcastGrid>
-        <li />
+        <div />
       </PodcastGrid>,
     )
 
