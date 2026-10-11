@@ -1,11 +1,9 @@
 import type { PodcastDetail } from '../../../shared/types'
+import { EMPTY_PODCAST_DETAIL } from './emptyPodcastDetail'
 import { findEpisode } from './findEpisode'
 
 const detail: PodcastDetail = {
-  id: '1',
-  name: 'Podcast',
-  artist: 'Artist',
-  image: 'img',
+  info: { id: '1', name: 'Podcast', artist: 'Artist', image: 'img' },
   episodeCount: 2,
   episodes: [
     { id: '10', title: 'First', releasedAt: '2026-01-01T00:00:00Z' },
@@ -22,8 +20,7 @@ describe('findEpisode', () => {
     expect(findEpisode(detail, '99')).toBeUndefined()
   })
 
-  it('returns undefined when there is no detail', () => {
-    expect(findEpisode(undefined, '10')).toBeUndefined()
-    expect(findEpisode(null, '10')).toBeUndefined()
+  it('returns undefined when the detail is empty', () => {
+    expect(findEpisode(EMPTY_PODCAST_DETAIL, '10')).toBeUndefined()
   })
 })
