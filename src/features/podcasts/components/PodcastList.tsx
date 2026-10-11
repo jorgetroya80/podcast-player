@@ -25,9 +25,7 @@ const PodcastList = () => {
       ) : (
         <PodcastGrid>
           {filtered.map(({ id, name, artist, image }) => (
-            <li key={id}>
-              <PodcastCard id={id} name={name} artist={artist} image={image} />
-            </li>
+            <PodcastCard key={id} id={id} name={name} artist={artist} image={image} />
           ))}
         </PodcastGrid>
       )}

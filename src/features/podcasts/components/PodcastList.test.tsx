@@ -19,6 +19,19 @@ describe('PodcastList', () => {
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 
+  it('renders each card as the single child of its own list item', async () => {
+    renderList()
+    await screen.findByText('The Joe Budden Podcast')
+
+    const items = screen.getAllByRole('listitem')
+    expect(items.length).toBeGreaterThan(0)
+    items.forEach((item) => {
+      expect(item.children).toHaveLength(1)
+      expect(item.children[0]).toBe(item.querySelector(':scope > a'))
+      expect(item.querySelector('li')).toBeNull()
+    })
+  })
+
   it('filters by name and shows the empty state without matches', async () => {
     renderList()
     await screen.findByText('The Joe Budden Podcast')
