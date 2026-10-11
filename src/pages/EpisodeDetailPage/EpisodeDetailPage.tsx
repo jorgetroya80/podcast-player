@@ -1,12 +1,12 @@
-import { useParams } from 'react-router'
-
 import { EpisodeDescription, EpisodePlayer } from '../../features/episode-player'
 import { findEpisode, usePodcastDetail } from '../../features/podcast-detail'
+import { useRequiredParam } from '../../shared/hooks/useRequiredParam'
 import { formatDate } from '../../shared/utils/formatDate'
 import { formatDuration } from '../../shared/utils/formatDuration'
 
 const EpisodeDetailPage = () => {
-  const { podcastId = '', episodeId = '' } = useParams()
+  const podcastId = useRequiredParam('podcastId')
+  const episodeId = useRequiredParam('episodeId')
   const { detail } = usePodcastDetail(podcastId)
   const episode = findEpisode(detail, episodeId)
 

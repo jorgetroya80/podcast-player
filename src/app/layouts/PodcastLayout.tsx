@@ -1,14 +1,15 @@
-import { Outlet, useParams } from 'react-router'
+import { Outlet } from 'react-router'
 
 import {
   EpisodeTableSkeleton,
   PodcastSidebar,
   usePodcastDetail,
 } from '../../features/podcast-detail'
+import { useRequiredParam } from '../../shared/hooks/useRequiredParam'
 import { useSidebarPodcast } from './useSidebarPodcast'
 
 const PodcastLayout = () => {
-  const { podcastId = '' } = useParams()
+  const podcastId = useRequiredParam('podcastId')
   const sidebar = useSidebarPodcast(podcastId)
   const { isPending } = usePodcastDetail(podcastId)
 

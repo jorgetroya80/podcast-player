@@ -1,14 +1,13 @@
-import { useParams } from 'react-router'
-
 import {
   EpisodeCount,
   EpisodeListEmpty,
   EpisodeTable,
   usePodcastDetail,
 } from '../../features/podcast-detail'
+import { useRequiredParam } from '../../shared/hooks/useRequiredParam'
 
 const PodcastDetailPage = () => {
-  const { podcastId = '' } = useParams()
+  const podcastId = useRequiredParam('podcastId')
   const { detail } = usePodcastDetail(podcastId)
   const count = detail?.episodeCount ?? 0
   const episodes = detail?.episodes ?? []
