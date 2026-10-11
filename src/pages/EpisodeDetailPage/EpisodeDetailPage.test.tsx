@@ -124,6 +124,28 @@ describe('EpisodeDetailPage', () => {
     expect(screen.getByRole('complementary')).toBe(sidebar)
   })
 
+  it('shows the right episode when opening one episode after another', async () => {
+    const [podcast, episode] = podcastDetails.results
+    const second = { ...episode, trackId: 2, trackName: 'Second episode' }
+    server.use(
+      http.get(LOOKUP, () =>
+        HttpResponse.json({ resultCount: 3, results: [podcast, episode, second] }),
+      ),
+    )
+    const user = userEvent.setup()
+    renderAt(episodePath(PODCAST_ID))
+    expect(await screen.findByRole('heading', { level: 1, name: EPISODE_TITLE })).toBeVisible()
+    const sidebar = screen.getByRole('complementary')
+
+    await user.click(within(sidebar).getByRole('link', { name: 'by Vulture' }))
+    await user.click(await screen.findByRole('link', { name: 'Second episode' }))
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'Second episode' })).toBeVisible()
+    expect(screen.queryByText(EPISODE_TITLE)).not.toBeInTheDocument()
+    expect(screen.getByRole('complementary')).toBe(sidebar)
+    expect(consoleError).not.toHaveBeenCalled()
+  })
+
   it('shows the generic error and keeps the header when the detail returns 500', async () => {
     server.use(http.get(LOOKUP, () => new HttpResponse(null, { status: 500 })))
 

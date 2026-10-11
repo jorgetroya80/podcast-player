@@ -1,18 +1,13 @@
+import { useLoaderData } from 'react-router'
+
 import { EpisodeDescription, EpisodePlayer } from '../../features/episode-player'
-import { findEpisode, usePodcastDetail } from '../../features/podcast-detail'
-import { useRequiredParam } from '../../shared/hooks/useRequiredParam'
+import type { Episode } from '../../shared/types'
 import { formatDate } from '../../shared/utils/formatDate'
 import { formatDuration } from '../../shared/utils/formatDuration'
 
 const EpisodeDetailPage = () => {
-  const podcastId = useRequiredParam('podcastId')
-  const episodeId = useRequiredParam('episodeId')
-  const { detail } = usePodcastDetail(podcastId)
-  const episode = findEpisode(detail, episodeId)
-
-  // The route loader guarantees the episode exists.
-  if (!episode) return null
-
+  // The route loader resolves to the episode it validated: one lookup per navigation.
+  const episode = useLoaderData<Episode>()
   const duration = formatDuration(episode.durationMs)
 
   return (
