@@ -64,12 +64,16 @@ describe('episodeLoader', () => {
     })
   })
 
-  it.each([{ podcastId: undefined, episodeId: '1' }, { podcastId: '1', episodeId: undefined }, {}])(
+  it.each([
+    [{ podcastId: undefined, episodeId: '1' }, 'Missing route param: podcastId'],
+    [{ podcastId: '1', episodeId: undefined }, 'Missing route param: episodeId'],
+    [{}, 'Missing route param: podcastId'],
+  ])(
     'rejects with a plain Error and requests nothing when params are missing %#',
-    async (params) => {
+    async (params, message) => {
       const result = episodeLoader(createQueryClient(), params)
 
-      await expect(result).rejects.toThrow('Missing podcastId or episodeId route params')
+      await expect(result).rejects.toThrow(message)
       await expect(result).rejects.not.toBeInstanceOf(NotFoundError)
       expect(requests).toBe(0)
       expect(consoleError).not.toHaveBeenCalled()
