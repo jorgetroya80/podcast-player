@@ -37,6 +37,14 @@ describe('podcastDetailQuery', () => {
     expect(requestUrls[0]?.searchParams.get('id')).toBe('123')
   })
 
+  it('does not let the id inject extra query parameters', async () => {
+    await createQueryClient().query(podcastDetailQuery('1&limit=500'))
+
+    expect(requestUrls).toHaveLength(1)
+    expect(requestUrls[0]?.searchParams.get('id')).toBe('1&limit=500')
+    expect(requestUrls[0]?.searchParams.get('limit')).toBe('20')
+  })
+
   it('uses a key per id', async () => {
     const client = createQueryClient()
 
