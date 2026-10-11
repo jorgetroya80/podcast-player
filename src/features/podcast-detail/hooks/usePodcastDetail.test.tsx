@@ -8,6 +8,7 @@ import { NotFoundError } from '../../../shared/api/NotFoundError'
 import podcastDetails from '../../../test/mocks/podcastDetails.json'
 import { server } from '../../../test/mocks/server'
 import { createTestQueryClient } from '../../../test/renderWithProviders'
+import { EMPTY_PODCAST_DETAIL } from '../api/emptyPodcastDetail'
 import { usePodcastDetail } from './usePodcastDetail'
 
 const LOOKUP_URL = 'https://itunes.apple.com/lookup'
@@ -32,19 +33,19 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
 
 const DetailName = ({ id }: { id: string }) => {
   const { detail } = usePodcastDetail(id)
-  return <p>{detail?.name ?? 'loading'}</p>
+  return <p>{detail.info?.name ?? 'loading'}</p>
 }
 
 describe('usePodcastDetail', () => {
-  it('starts pending without detail, then returns the mapped detail', async () => {
+  it('starts pending with the empty detail, then returns the mapped detail', async () => {
     const { result } = renderHook(() => usePodcastDetail('934552872'), { wrapper })
 
     expect(result.current.isPending).toBe(true)
-    expect(result.current.detail).toBeUndefined()
+    expect(result.current.detail).toBe(EMPTY_PODCAST_DETAIL)
 
     await waitFor(() => expect(result.current.isPending).toBe(false))
-    expect(result.current.detail?.name).toBe('Switched on Pop')
-    expect(result.current.detail?.episodes).toHaveLength(1)
+    expect(result.current.detail.info?.name).toBe('Switched on Pop')
+    expect(result.current.detail.episodes).toHaveLength(1)
   })
 
   it('requests again when the id changes', async () => {
@@ -67,13 +68,13 @@ describe('usePodcastDetail', () => {
     await waitFor(() => expect(result.current.isPending).toBe(false))
   })
 
-  it('settles with a null detail when iTunes has no results for the id', async () => {
+  it('settles with the empty detail when iTunes has no results for the id', async () => {
     server.use(http.get(LOOKUP_URL, () => HttpResponse.json({ resultCount: 0, results: [] })))
 
     const { result } = renderHook(() => usePodcastDetail('9345528'), { wrapper })
 
     await waitFor(() => expect(result.current.isPending).toBe(false))
-    expect(result.current.detail).toBeNull()
+    expect(result.current.detail).toBe(EMPTY_PODCAST_DETAIL)
   })
 
   describe('errors', () => {
