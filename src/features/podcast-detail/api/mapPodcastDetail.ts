@@ -1,4 +1,5 @@
 import type { Episode, PodcastDetail } from '../../../shared/types'
+import { EMPTY_PODCAST_DETAIL } from './emptyPodcastDetail'
 import type { LookupEpisode, LookupPodcast, PodcastLookupResponse } from './types'
 
 const isPodcast = (result: LookupPodcast | LookupEpisode): result is LookupPodcast =>
@@ -18,17 +19,19 @@ function mapEpisode(episode: LookupEpisode): Episode {
   }
 }
 
-// if iTunes response is 200 with an empty `results` for an unknown id: there is no detail to map.
-function mapPodcastDetail({ results }: PodcastLookupResponse): PodcastDetail | null {
+// iTunes response 200 with an empty `results` for an unknown id: that maps to the empty detail.
+function mapPodcastDetail({ results }: PodcastLookupResponse): PodcastDetail {
   const podcast = results.find(isPodcast)
 
-  if (!podcast) return null
+  if (!podcast) return EMPTY_PODCAST_DETAIL
 
   return {
-    id: String(podcast.collectionId),
-    name: podcast.collectionName,
-    artist: podcast.artistName,
-    image: podcast.artworkUrl600,
+    info: {
+      id: String(podcast.collectionId),
+      name: podcast.collectionName,
+      artist: podcast.artistName,
+      image: podcast.artworkUrl600,
+    },
     episodeCount: podcast.trackCount,
     episodes: results.filter(isEpisode).map(mapEpisode),
   }
