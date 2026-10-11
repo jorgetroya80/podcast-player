@@ -105,14 +105,15 @@ The code follows a **simplified Feature-Sliced Design (FSD)**. FSD organizes an 
 
 ```
 src/
-  app/        Application shell: providers, router, layouts, global styles
+  app/        Application shell: providers, router, route loaders, layouts, global styles
   pages/      One component per route; thin, they only compose features
   features/   Business slices, each with its own public API (index.ts)
     podcasts/        list, filter, card, skeletons
-    podcast-detail/  sidebar, episode table, detail query and hooks
-    episode-player/  audio player, sanitized description
+    podcast-detail/  sidebar, episode table, detail query, episode loader
+    episode-detail/  audio player, sanitized description
   shared/     Code with no business knowledge: HTTP client, query client,
-              errors, formatting helpers, generic components, shared types
+              errors, route-param helpers, formatting helpers, generic
+              components, shared types
   test/       Test support: MSW server and fixtures, render helpers
 ```
 
@@ -137,7 +138,7 @@ Importing a feature only through its `index.ts` is the convention for the public
 
 ```
 features/podcast-detail/
-  api/         Queries, mappers and API types (podcastDetailQuery, mapPodcastDetail, …)
+  api/         Queries, mappers, loaders and API types (podcastDetailQuery, mapPodcastDetail, episodeLoader, …)
   components/  Presentational components (PodcastSidebar, EpisodeTable, …)
   hooks/       usePodcastDetail
   index.ts     Public API: the only file other layers import from
@@ -155,6 +156,8 @@ AppLayout                      header + progress indicator + <Outlet />
 ```
 
 Errors are caught by a single `errorElement` that wraps the content below the header, so the header always stays visible. URLs that match no route fall into the `*` catch-all, whose loader throws a 404 response; the same error screen renders it as "Page not found.". The episode route has its own `errorElement`, so an unknown episode shows its message in the right-hand column while the sidebar stays.
+
+Route loaders live next to what they validate. The episode loader sits in the `podcast-detail` feature (`api/episodeLoader.ts`): it validates the episode and returns it, and the page reads it with `useLoaderData`, so there is one lookup per navigation. The app-level loaders (`podcastLayoutLoader`, `notFoundLoader`) are in `src/app/loaders.ts`. `router.tsx` only declares routes.
 
 ### Data flow
 
@@ -178,26 +181,28 @@ page ─▶ feature hook ─▶ TanStack Query ─▶ getJson ─▶ buildReques
   - _Open/closed:_ a new state or filter is a new component or function, not an edit of existing ones.
   - _Interface segregation:_ components take only what they use, for example `PodcastCard` receives `id`, `name`, `artist` and `image`, not a whole `Podcast`.
   - _Dependency inversion:_ containers depend on hooks (`usePodcasts`, `usePodcastDetail`), not on `fetch`. Tests replace the network with MSW.
-- **Composition in the `app` layer.** `PodcastLayout` is the only place that combines two features (the cached podcast list and the podcast detail). Features stay independent.
+- **Composition in the `app` layer.** `PodcastLayout` is the only place that combines two features (the cached podcast list and the podcast detail), and the sidebar's data-source rule lives in its `useSidebarPodcast` hook. Features stay independent.
 - **Small typed errors.** `HttpError` (carries the status) and `NotFoundError` (carries a user-facing message) live in `shared`. Features throw them directly (`new NotFoundError('Podcast not found')`), so the shared error screen can render them without knowing the features and there is one class per kind of failure, not one per feature.
+- **Required route params.** Components read params with `useRequiredParam('podcastId')` and the episode loader with `requireParam`; a missing param throws `Missing route param: <name>` instead of falling back to `''`.
+- **Null object instead of `null`.** `mapPodcastDetail` never returns `null`: an unknown podcast (200 with empty `results`) maps to `EMPTY_PODCAST_DETAIL`, and the absence of the podcast is modeled in the type (`PodcastDetail.info?`). Callers (`findEpisode`, pages, `useSidebarPodcast`) need no null checks.
 - **Pure functions for logic.** `filterPodcasts`, `formatDate`, `formatDuration`, `plainTextToHtml` and `findEpisode` have no side effects and are tested in isolation.
 
 ## Design decisions
 
-| Decision                                                        | Alternatives considered                             | Reason                                                                                                                                                                                                                                                                                                                                |
-| --------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Call iTunes directly with `fetch`**, no CORS proxy            | A public proxy such as `allorigins.win`             | iTunes answers with `access-control-allow-origin: *`, so a proxy is not needed. A proxy adds latency and a third party, and it wraps every response in a `200`, which would hide the real HTTP status that `getJson` relies on to tell a `400` from a `5xx`. If CORS is ever closed, `buildRequestUrl` is the single place to change. |
-| **24 h cache, persisted in `localStorage`**                     | In-memory cache only                                | The list and each detail are requested again only after 24 hours, even across reloads. `staleTime`, `gcTime` and `maxAge` are all 24 h; `main.tsx` waits for the cache to be restored before creating the router, otherwise loaders would hit the network even with stored data.                                                      |
-| **React Router data router with loaders**                       | Fetching only inside components                     | Loaders make navigation state observable, which powers the progress indicator and the first-load skeletons (`HydrateFallback`).                                                                                                                                                                                                       |
-| **The podcast layout loader waits only for the list**           | Waiting for list and detail; no loader at all       | The sidebar can paint instantly from the cached list while the episodes load behind a skeleton on the right. Without a loader the indicator would not show when the data is already cached, and the sidebar could flicker between two data sources.                                                                                   |
-| **Sidebar data from the cached list item**                      | Always from the detail response                     | The list item is already in cache, so the sidebar needs no network. If the podcast is not in the top 100 (for example a direct link), name, artist and image come from the detail response and the description is omitted.                                                                                                            |
-| **One `errorElement` instead of an error boundary per feature** | Per-feature error boundaries                        | Loader and query failures all end in the same place, and the user sees a consistent message. Fewer moving parts.                                                                                                                                                                                                                      |
-| **`retry: false`**                                              | TanStack Query's default of 3 retries with back-off | Errors reach the user immediately instead of after several seconds of silent retries.                                                                                                                                                                                                                                                 |
-| **No logging inside `useEffect`**                               | Logging errors in the error component               | `getJson` logs HTTP failures once at the source, and the episode loader logs a missing episode once. Effects are not used for side effects that are not about synchronizing with the outside world.                                                                                                                                   |
-| **DOMPurify for descriptions**                                  | `sanitize-html`, `xss`, `html-react-parser`         | DOMPurify sanitizes against the browser's own parser, is small and widely audited. `html-react-parser` does not sanitize, and `xss` filters strings rather than the DOM.                                                                                                                                                              |
-| **Descriptions are plain text more often than HTML**            | Rendering the raw string                            | iTunes usually sends plain text with newlines. `plainTextToHtml` turns blank-line separated blocks into paragraphs (and single newlines into `<br>`) before sanitizing, and returns real HTML untouched.                                                                                                                              |
-| **Own components, no UI library**                               | Component libraries                                 | The UI is small; Tailwind utilities are enough and keep the bundle light.                                                                                                                                                                                                                                                             |
-| **Exact dependency versions**                                   | Version ranges                                      | Reproducible builds; updates are deliberate.                                                                                                                                                                                                                                                                                          |
+| Decision                                                        | Alternatives considered                             | Reason                                                                                                                                                                                                                                                                                                                                                                                                           |
+| --------------------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Call iTunes directly with `fetch`**, no CORS proxy            | A public proxy such as `allorigins.win`             | iTunes answers with `access-control-allow-origin: *`, so a proxy is not needed. A proxy adds latency and a third party, and it wraps every response in a `200`, which would hide the real HTTP status that `getJson` relies on to tell a `400` from a `5xx`. If CORS is ever closed, `buildRequestUrl` is the single place to change.                                                                            |
+| **24 h cache, persisted in `localStorage`**                     | In-memory cache only                                | The list and each detail are requested again only after 24 hours, even across reloads. `staleTime`, `gcTime` and `maxAge` are all 24 h; `main.tsx` waits for the cache to be restored before creating the router, otherwise loaders would hit the network even with stored data. `CACHE_BUSTER` (`queryClient.ts`) is passed as `buster` to `persistQueryClient`; bump it when the shape of cached data changes. |
+| **React Router data router with loaders**                       | Fetching only inside components                     | Loaders make navigation state observable, which powers the progress indicator and the first-load skeletons (`HydrateFallback`). On `/` the fallback is the page itself (same frame and filter, with the skeleton grid inside), so the first item does not move when the data arrives.                                                                                                                            |
+| **The podcast layout loader waits only for the list**           | Waiting for list and detail; no loader at all       | The sidebar can paint instantly from the cached list while the episodes load behind a skeleton on the right. Without a loader the indicator would not show when the data is already cached, and the sidebar could flicker between two data sources.                                                                                                                                                              |
+| **Sidebar data from the cached list item**                      | Always from the detail response                     | The list item is already in cache, so the sidebar needs no network. If the podcast is not in the top 100 (for example a direct link), name, artist and image come from the detail response and the description is omitted.                                                                                                                                                                                       |
+| **One `errorElement` instead of an error boundary per feature** | Per-feature error boundaries                        | Loader and query failures all end in the same place, and the user sees a consistent message. Fewer moving parts.                                                                                                                                                                                                                                                                                                 |
+| **`retry: false`**                                              | TanStack Query's default of 3 retries with back-off | Errors reach the user immediately instead of after several seconds of silent retries.                                                                                                                                                                                                                                                                                                                            |
+| **No logging inside `useEffect`**                               | Logging errors in the error component               | Failed queries are logged once by the query cache (`QueryCache.onError`), and the episode loader logs a missing episode once. Effects are not used for side effects that are not about synchronizing with the outside world.                                                                                                                                                                                     |
+| **DOMPurify for descriptions**                                  | `sanitize-html`, `xss`                              | DOMPurify sanitizes against the browser's own parser, is small and widely audited, whereas `xss` filters strings rather than the DOM.                                                                                                                                                                                                                                                                            |
+| **Descriptions are plain text more often than HTML**            | Rendering the raw string                            | iTunes usually sends plain text with newlines. `plainTextToHtml` turns blank-line separated blocks into paragraphs (and single newlines into `<br>`) before sanitizing, and returns real HTML untouched.                                                                                                                                                                                                         |
+| **Own components, no UI library**                               | Component libraries                                 | The UI is small; Tailwind utilities are enough and keep the bundle light.                                                                                                                                                                                                                                                                                                                                        |
+| **Exact dependency versions**                                   | Version ranges                                      | Reproducible builds; updates are deliberate.                                                                                                                                                                                                                                                                                                                                                                     |
 
 ## Error handling and edge cases
 
@@ -212,13 +217,14 @@ page ─▶ feature hook ─▶ TanStack Query ─▶ getJson ─▶ buildReques
 | Podcast list request fails on the detail route            | Detail page still works; the sidebar uses the detail data                                    |
 | Unknown URL (matches no route)                            | "Page not found." below the header                                                           |
 | Episode without audio URL                                 | "Audio not available for this episode." instead of the player                                |
-| Episode without description or duration                   | The missing part is simply not rendered                                                      |
+| Episode without description                               | The description block is not rendered                                                        |
+| Episode without duration                                  | Empty cell in the table; "Duration" is omitted on the episode page                           |
 
-HTTP failures are written to `console.error` once, by `getJson`, with message and stack.
+Failed queries are written to `console.error` once, by the query cache (`QueryCache.onError`), with message and stack. `getJson` only throws.
 
 ## Security
 
-Episode descriptions come from third parties and are injected into the page, so they are sanitized first (`src/features/episode-player/components/sanitizeHtml.ts`):
+Episode descriptions come from third parties and are injected into the page, so they are sanitized first (`src/features/episode-detail/components/sanitizeHtml.ts`):
 
 - Pipeline: `plainTextToHtml` → DOMPurify → `dangerouslySetInnerHTML`.
 - DOMPurify's default profile removes `<script>`, `<iframe>`, `on*` handlers and `javascript:` URLs.
@@ -239,7 +245,7 @@ Episode descriptions come from third parties and are injected into the page, so 
   - the 24 h cache (with a fake clock and request counting)
   - sanitization (scripts, event handlers, `javascript:` URLs and iframes are removed)
 - **What is not tested:** styling, library internals and end-to-end flows in a real browser.
-- **Coverage:** about 98 % of statements and 97 % of branches (`pnpm test:coverage`). The remaining uncovered lines are defensive guards that routing makes unreachable.
+- **Coverage:** about 99 % of statements and 98 % of branches (`pnpm test:coverage`). The few uncovered lines are `createAppRouter` (the browser router), the relative-URL branch of `buildRequestUrl` and one branch of `PodcastGrid`.
 - **Architecture rules** are checked by ESLint (`pnpm lint`), not by tests.
 
 ## Accessibility and responsive design
@@ -252,6 +258,8 @@ Episode descriptions come from third parties and are injected into the page, so 
 ## Known limitations
 
 - Only the **20 most recent episodes** are shown per podcast, which is what the iTunes lookup returns with the limit used. The episode count shown is the real total reported by the API.
+- iTunes omits the duration (`trackTimeMillis`) of some episodes, mostly older ones (for example, 13 of the 20 episodes of one podcast we checked). Those rows show an empty duration cell.
+- On a direct load of `/podcast/:id` the first-load skeleton is a plain placeholder, not framed like the final layout (sidebar plus content column), so it shifts when the layout appears. The list route does not have this problem.
 - URLs that appear as plain text in a description are not turned into links; only real `<a>` elements are.
 - The audio player is the browser's native `<audio controls>`, so its look varies between browsers.
 - There is no server-side rendering and no service worker; the cache lives in the browser's `localStorage`.
