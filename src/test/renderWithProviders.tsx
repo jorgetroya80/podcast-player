@@ -3,9 +3,10 @@ import { render } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { createMemoryRouter, MemoryRouter, type RouteObject } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
+import { createQueryCache } from '../shared/api/queryClient'
 
 export const createTestQueryClient = () =>
-  new QueryClient({ defaultOptions: { queries: { retry: false } } })
+  new QueryClient({ queryCache: createQueryCache(), defaultOptions: { queries: { retry: false } } })
 
 type Options = {
   route?: string
