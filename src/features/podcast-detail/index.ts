@@ -7,3 +7,4 @@ export { default as EpisodeTableSkeleton } from './components/EpisodeTableSkelet
 export { default as EpisodeListEmpty } from './components/EpisodeListEmpty'
 export type { PodcastDetail } from '../../shared/types'
 export { findEpisode } from './api/findEpisode'
+export { episodeLoader } from './api/episodeLoader'
