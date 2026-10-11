@@ -50,7 +50,7 @@ describe('episodeLoader', () => {
     })
   })
 
-  it('treats a detail with no results (null) as episode not found', async () => {
+  it('treats a detail with no results (empty detail) as episode not found', async () => {
     server.use(http.get(LOOKUP_URL, () => HttpResponse.json({ resultCount: 0, results: [] })))
 
     const result = episodeLoader(createQueryClient(), { podcastId: PODCAST_ID, episodeId: '1' })

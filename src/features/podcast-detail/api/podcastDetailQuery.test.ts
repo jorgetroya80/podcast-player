@@ -6,6 +6,7 @@ import { NotFoundError } from '../../../shared/api/NotFoundError'
 import podcastDetails from '../../../test/mocks/podcastDetails.json'
 import { server } from '../../../test/mocks/server'
 
+import { EMPTY_PODCAST_DETAIL } from './emptyPodcastDetail'
 import { podcastDetailQuery } from './podcastDetailQuery'
 
 const LOOKUP_URL = 'https://itunes.apple.com/lookup'
@@ -26,8 +27,8 @@ describe('podcastDetailQuery', () => {
   it('fetches and maps the podcast detail', async () => {
     const detail = await createQueryClient().query(podcastDetailQuery('934552872'))
 
-    expect(detail).toMatchObject({ id: '934552872', name: 'Switched on Pop' })
-    expect(detail?.episodes).toHaveLength(1)
+    expect(detail).toMatchObject({ info: { id: '934552872', name: 'Switched on Pop' } })
+    expect(detail.episodes).toHaveLength(1)
   })
 
   it('sends the given id in the request', async () => {
@@ -116,10 +117,12 @@ describe('podcastDetailQuery', () => {
       await expect(result).rejects.toThrow('Podcast not found')
     })
 
-    it('resolves to null, without logging, when there are no results', async () => {
+    it('resolves to the empty detail, without logging, when there are no results', async () => {
       server.use(http.get(LOOKUP_URL, () => HttpResponse.json({ resultCount: 0, results: [] })))
 
-      await expect(createQueryClient().query(podcastDetailQuery('1'))).resolves.toBeNull()
+      await expect(createQueryClient().query(podcastDetailQuery('1'))).resolves.toBe(
+        EMPTY_PODCAST_DETAIL,
+      )
       expect(consoleError).not.toHaveBeenCalled()
     })
   })
