@@ -9,12 +9,11 @@ import { useRequiredParam } from '../../shared/hooks/useRequiredParam'
 const PodcastDetailPage = () => {
   const podcastId = useRequiredParam('podcastId')
   const { detail } = usePodcastDetail(podcastId)
-  const count = detail?.episodeCount ?? 0
-  const episodes = detail?.episodes ?? []
+  const { episodeCount, episodes } = detail
 
   return (
     <div className="flex flex-col gap-6">
-      <EpisodeCount count={count} />
+      <EpisodeCount count={episodeCount} />
       {episodes.length === 0 ? (
         <EpisodeListEmpty />
       ) : (

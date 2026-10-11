@@ -21,9 +21,5 @@ export const useSidebarPodcast = (podcastId: string): SidebarPodcast | undefined
     const { id, name, artist, image, summary } = listed
     return { id, name, artist, image, description: summary }
   }
-  if (detail) {
-    const { id, name, artist, image } = detail
-    return { id, name, artist, image }
-  }
-  return undefined
+  return detail.info && { ...detail.info }
 }
