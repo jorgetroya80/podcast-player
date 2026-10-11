@@ -31,21 +31,28 @@ describe('getJson', () => {
 
       expect(error).toBeInstanceOf(HttpError)
       expect(error).toMatchObject({ status })
-      expect(errorSpy).toHaveBeenCalledTimes(1)
     },
   )
 
-  it('rejects and logs on a network failure', async () => {
+  it('rejects on a network failure', async () => {
     server.use(http.get(TOP_PODCASTS_URL, () => HttpResponse.error()))
 
     await expect(getJson(TOP_PODCASTS_URL)).rejects.toThrow()
-    expect(errorSpy).toHaveBeenCalledTimes(1)
   })
 
-  it('rejects and logs when the body is not valid JSON', async () => {
+  it('rejects when the body is not valid JSON', async () => {
     server.use(http.get(TOP_PODCASTS_URL, () => new HttpResponse('not json')))
 
     await expect(getJson(TOP_PODCASTS_URL)).rejects.toThrow()
-    expect(errorSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('never logs, whatever the outcome', async () => {
+    await getJson(TOP_PODCASTS_URL)
+    server.use(http.get(TOP_PODCASTS_URL, () => new HttpResponse(null, { status: 500 })))
+    await getJson(TOP_PODCASTS_URL).catch(() => undefined)
+    server.use(http.get(TOP_PODCASTS_URL, () => HttpResponse.error()))
+    await getJson(TOP_PODCASTS_URL).catch(() => undefined)
+
+    expect(errorSpy).not.toHaveBeenCalled()
   })
 })
