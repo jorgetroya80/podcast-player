@@ -10,6 +10,7 @@ import { episodeLoader } from './episodeLoader'
 const LOOKUP_URL = 'https://itunes.apple.com/lookup'
 const PODCAST_ID = '934552872'
 const EPISODE_ID = '1000793367564'
+const EPISODE_TITLE = 'Has Taylor Swift jumped the shark?'
 
 describe('episodeLoader', () => {
   let requests: number
@@ -28,13 +29,13 @@ describe('episodeLoader', () => {
     consoleError.mockRestore()
   })
 
-  it('resolves to null, without logging, when the episode exists', async () => {
+  it('resolves to the found episode, without logging', async () => {
     const result = episodeLoader(createQueryClient(), {
       podcastId: PODCAST_ID,
       episodeId: EPISODE_ID,
     })
 
-    await expect(result).resolves.toBeNull()
+    await expect(result).resolves.toMatchObject({ id: EPISODE_ID, title: EPISODE_TITLE })
     expect(consoleError).not.toHaveBeenCalled()
   })
 
