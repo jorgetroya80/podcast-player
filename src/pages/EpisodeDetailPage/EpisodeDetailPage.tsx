@@ -1,6 +1,6 @@
 import { useLoaderData } from 'react-router'
 
-import { EpisodeDescription, EpisodePlayer } from '../../features/episode-player'
+import { EpisodeDescription, EpisodePlayer } from '../../features/episode-detail'
 import type { Episode } from '../../shared/types'
 import { formatDate } from '../../shared/utils/formatDate'
 import { formatDuration } from '../../shared/utils/formatDuration'
