@@ -5,6 +5,9 @@ import { logQueryError } from './logQueryError'
 
 export const ONE_DAY_MS = 24 * 60 * 60 * 1000
 
+// Bump when the shape of persisted query data changes, so stale localStorage entries are dropped.
+export const CACHE_BUSTER = 'podcast-detail-v1'
+
 export const createQueryCache = () => new QueryCache({ onError: logQueryError })
 
 export const createQueryClient = () =>

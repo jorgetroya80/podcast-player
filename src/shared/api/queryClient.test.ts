@@ -1,4 +1,4 @@
-import { createQueryClient, ONE_DAY_MS } from './queryClient'
+import { CACHE_BUSTER, createQueryClient, ONE_DAY_MS } from './queryClient'
 
 describe('createQueryClient', () => {
   it('keeps data fresh and cached for 24 hours', () => {
@@ -10,6 +10,12 @@ describe('createQueryClient', () => {
 
   it('does not retry failed queries, so errors reach the user at once', () => {
     expect(createQueryClient().getDefaultOptions().queries?.retry).toBe(false)
+  })
+})
+
+describe('CACHE_BUSTER', () => {
+  it('is a non-empty string', () => {
+    expect(CACHE_BUSTER).not.toBe('')
   })
 })
 
