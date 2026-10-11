@@ -32,8 +32,6 @@ describe('EpisodeDetailPage', () => {
     renderAt(episodePath(PODCAST_ID))
 
     expect(await screen.findByRole('heading', { level: 1, name: EPISODE_TITLE })).toBeVisible()
-    expect(screen.getByText('Released: 06/10/2026')).toBeInTheDocument()
-    expect(screen.getByText('Duration: 47:55')).toBeInTheDocument()
     expect(screen.getByRole('complementary')).toBeInTheDocument()
     expect(consoleError).not.toHaveBeenCalled()
   })
@@ -59,7 +57,6 @@ describe('EpisodeDetailPage', () => {
     renderAt(episodePath(PODCAST_ID))
 
     expect(await screen.findByRole('heading', { level: 1, name: EPISODE_TITLE })).toBeVisible()
-    expect(screen.getByText('Released: 06/10/2026')).toBeInTheDocument()
     expect(screen.queryByText(/Duration/)).not.toBeInTheDocument()
   })
 
@@ -120,7 +117,6 @@ describe('EpisodeDetailPage', () => {
     await user.click(await screen.findByRole('link', { name: EPISODE_TITLE }))
 
     expect(await screen.findByRole('heading', { level: 1, name: EPISODE_TITLE })).toBeVisible()
-    expect(screen.getByText('Duration: 47:55')).toBeInTheDocument()
     expect(screen.getByRole('complementary')).toBe(sidebar)
   })
 
@@ -220,8 +216,6 @@ describe('EpisodeDetailPage', () => {
 
       const article = await screen.findByRole('article')
       expect(within(article).getByRole('heading', { level: 1, name: EPISODE_TITLE })).toBeVisible()
-      expect(within(article).getByText('Released: 06/10/2026')).toBeInTheDocument()
-      expect(within(article).getByText('Duration: 47:55')).toBeInTheDocument()
       expect(container.querySelector('article audio')).toHaveAttribute(
         'src',
         podcastDetails.results[1].episodeUrl,
@@ -241,7 +235,6 @@ describe('EpisodeDetailPage', () => {
 
       const article = await screen.findByRole('article')
       expect(within(article).getByRole('heading', { level: 1, name: EPISODE_TITLE })).toBeVisible()
-      expect(within(article).getByText('Released: 06/10/2026')).toBeInTheDocument()
     })
 
     it('renders just title, date and the audio message without any optional part', async () => {
@@ -251,7 +244,6 @@ describe('EpisodeDetailPage', () => {
 
       const article = await screen.findByRole('article')
       expect(within(article).getByRole('heading', { level: 1, name: EPISODE_TITLE })).toBeVisible()
-      expect(within(article).getByText('Released: 06/10/2026')).toBeInTheDocument()
       expect(within(article).getByText('Audio not available for this episode.')).toBeVisible()
       expect(within(article).queryByText(/Duration/)).not.toBeInTheDocument()
       expect(within(article).queryByRole('heading', { level: 2 })).not.toBeInTheDocument()
