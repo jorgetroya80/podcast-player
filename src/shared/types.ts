@@ -15,11 +15,15 @@ export type Episode = {
   releasedAt: string // releaseDate (ISO 8601)
 }
 
-export type PodcastDetail = {
+export type PodcastInfo = {
   id: string // results[0].collectionId
   name: string // results[0].collectionName
   artist: string // results[0].artistName
   image: string // results[0].artworkUrl600
-  episodeCount: number // results[0].trackCount (total real, not the 20 downloaded)
+}
+
+export type PodcastDetail = {
+  info?: PodcastInfo // absent when iTunes has no such podcast (200 with empty results)
+  episodeCount: number // results[0].trackCount (total real, not the 20 downloaded); 0 when absent
   episodes: Episode[] // results[1..] mapped to Episode
 }
