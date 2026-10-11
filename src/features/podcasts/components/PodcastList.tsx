@@ -13,7 +13,11 @@ const PodcastList = () => {
 
   return (
     <section>
-      <PodcastFilter value={query} onChange={setQuery} count={filtered.length} />
+      <PodcastFilter
+        value={query}
+        onChange={setQuery}
+        count={isPending ? undefined : filtered.length}
+      />
       {isPending ? (
         <PodcastListSkeleton />
       ) : filtered.length === 0 ? (

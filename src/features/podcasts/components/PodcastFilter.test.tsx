@@ -20,4 +20,10 @@ describe('PodcastFilter', () => {
 
     expect(onChange).toHaveBeenCalledWith('a')
   })
+
+  it('hides the count badge when no count is given', () => {
+    render(<PodcastFilter value="" onChange={() => vi.fn()} />)
+
+    expect(screen.getByRole('search')).not.toHaveTextContent('0')
+  })
 })

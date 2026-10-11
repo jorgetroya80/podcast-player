@@ -1,13 +1,17 @@
 type PodcastFilterProps = {
   value: string
   onChange: (value: string) => void
-  count: number
+  count?: number | undefined
 }
 
 const PodcastFilter = ({ value, onChange, count }: PodcastFilterProps) => {
   return (
     <div role="search" className="flex items-center justify-end gap-3">
-      <span className="rounded bg-blue-500 px-2 py-0.5 text-sm font-bold text-white">{count}</span>
+      {count !== undefined && (
+        <span className="rounded bg-blue-500 px-2 py-0.5 text-sm font-bold text-white">
+          {count}
+        </span>
+      )}
       <label htmlFor="filter-podcasts" className="sr-only">
         Filter podcasts
       </label>
