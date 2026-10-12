@@ -102,4 +102,47 @@ describe('EpisodeDescription', () => {
 
     expect(container.querySelector('p')?.textContent).toBe('I <3 Q&A')
   })
+
+  it('turns plain-text URLs into safe links', () => {
+    render(
+      <EpisodeDescription
+        html={
+          'Follow us:\nhttps://www.instagram.com/60songsthatexplainthe90s/?utm_source=ig_web_button_share_sheet\n' +
+          'https://www.tiktok.com/@60songsthatexplainthe90s?is_from_webapp=1&sender_device=pc\n\n' +
+          'See podcastchoices.com/adchoices for privacy info.'
+        }
+      />,
+    )
+
+    const expected = [
+      'https://www.instagram.com/60songsthatexplainthe90s/?utm_source=ig_web_button_share_sheet',
+      'https://www.tiktok.com/@60songsthatexplainthe90s?is_from_webapp=1&sender_device=pc',
+      'https://podcastchoices.com/adchoices',
+    ]
+    const links = screen.getAllByRole('link')
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(expected)
+    for (const link of links) {
+      expect(link).toHaveAttribute('target', '_blank')
+      expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+    }
+    expect(links[2]).toHaveTextContent('podcastchoices.com/adchoices')
+  })
+
+  it('stays safe with hostile plain text', () => {
+    const { container } = render(
+      <EpisodeDescription
+        html={
+          'https://x.test/"onmouseover="alert(1)\njavascript:alert(1)\n&lt;script&gt; <script>alert(2)</script'
+        }
+      />,
+    )
+
+    expect(container.querySelector('script')).not.toBeInTheDocument()
+    expect(container.querySelector('[onmouseover]')).not.toBeInTheDocument()
+    for (const link of screen.queryAllByRole('link')) {
+      expect(link.getAttribute('href')).not.toMatch(/^javascript:/i)
+      expect(link.getAttributeNames().filter((name) => name.startsWith('on'))).toEqual([])
+    }
+    expect(container).toHaveTextContent('javascript:alert(1)')
+  })
 })

@@ -186,6 +186,27 @@ describe('EpisodeDetailPage', () => {
       expect(container).not.toHaveTextContent('alert(1)')
     })
 
+    it('turns plain-text URLs in the description into links', async () => {
+      withDescription(
+        'Follow us\nhttps://www.instagram.com/60songsthatexplainthe90s\n' +
+          'https://www.tiktok.com/@60songsthatexplainthe90s\n\n' +
+          'podcastchoices.com/adchoices',
+      )
+
+      renderAt(episodePath(PODCAST_ID))
+
+      const link = await screen.findByRole('link', { name: 'podcastchoices.com/adchoices' })
+      expect(link).toHaveAttribute('href', 'https://podcastchoices.com/adchoices')
+      expect(link).toHaveAttribute('target', '_blank')
+      expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+      expect(
+        screen.getByRole('link', { name: /^https:\/\/www\.tiktok\.com\/@60songs/ }),
+      ).toHaveAttribute('href', 'https://www.tiktok.com/@60songsthatexplainthe90s')
+      expect(
+        screen.getByRole('link', { name: /^https:\/\/www\.instagram\.com\/60songs/ }),
+      ).toHaveAttribute('href', 'https://www.instagram.com/60songsthatexplainthe90s')
+    })
+
     it('renders no description block when the episode has no description', async () => {
       withDescription(undefined)
 
