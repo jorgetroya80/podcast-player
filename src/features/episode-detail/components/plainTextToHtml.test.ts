@@ -35,4 +35,19 @@ describe('plainTextToHtml', () => {
 
     expect(plainTextToHtml(html)).toBe(html)
   })
+
+  it('links URLs inside paragraphs and across line breaks', () => {
+    expect(
+      plainTextToHtml('Visit https://a.test/x.\nAlso podcastchoices.com/adchoices\n\nBye'),
+    ).toBe(
+      '<p>Visit <a href="https://a.test/x">https://a.test/x</a>.<br>Also ' +
+        '<a href="https://podcastchoices.com/adchoices">podcastchoices.com/adchoices</a></p><p>Bye</p>',
+    )
+  })
+
+  it('does not link URLs in real HTML', () => {
+    const html = '<p>See https://a.test and example.com</p>'
+
+    expect(plainTextToHtml(html)).toBe(html)
+  })
 })

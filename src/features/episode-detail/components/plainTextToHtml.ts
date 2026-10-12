@@ -1,7 +1,6 @@
-const HAS_TAGS = /<\/?[a-z][^>]*>/i
+import { linkifyText } from './linkifyText'
 
-const escapeHtml = (text: string) =>
-  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+const HAS_TAGS = /<\/?[a-z][^>]*>/i
 
 // iTunes usually sends plain text where blank lines separate blocks. Turn it into paragraphs so
 // runs of "\n" do not become tall empty gaps. Real HTML is returned untouched.
@@ -13,7 +12,7 @@ const plainTextToHtml = (text: string): string => {
     .split(/\n\s*\n/)
     .map((paragraph) => paragraph.trim())
     .filter(Boolean)
-    .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, '<br>')}</p>`)
+    .map((paragraph) => `<p>${linkifyText(paragraph).replace(/\n/g, '<br>')}</p>`)
     .join('')
 }
 
