@@ -51,7 +51,6 @@ pnpm preview
 | Command              | What it does                                  |
 | -------------------- | --------------------------------------------- |
 | `pnpm test`          | Tests in watch mode                           |
-| `pnpm test:run`      | Tests once                                    |
 | `pnpm test:coverage` | Tests once, with a V8 coverage report         |
 | `pnpm lint`          | ESLint (includes the architecture boundaries) |
 | `pnpm typecheck`     | TypeScript project build without emitting     |
@@ -248,7 +247,7 @@ Episode descriptions come from third parties and are injected into the page, so 
   - the 24 h cache (with a fake clock and request counting)
   - sanitization (scripts, event handlers, `javascript:` URLs and iframes are removed)
 - **What is not tested:** styling, library internals and end-to-end flows in a real browser.
-- **Coverage:** about 99 % of statements and 98 % of branches (`pnpm test:coverage`). The few uncovered lines are `createAppRouter` (the browser router), the relative-URL branch of `buildRequestUrl` and one branch of `PodcastGrid`.
+- **Coverage:** the threshold is **85 %** for statements, branches, functions and lines across the whole project (`coverage.thresholds` in `vite.config.ts`). `pnpm test:coverage` fails if any of them drops below 85 %.
 - **Architecture rules** are checked by ESLint (`pnpm lint`), not by tests.
 
 ## Accessibility and responsive design
