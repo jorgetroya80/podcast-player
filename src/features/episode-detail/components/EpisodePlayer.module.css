@@ -1,0 +1,9 @@
+.unavailable {
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  color: var(--color-gray-600);
+}
+
+.audio {
+  width: 100%;
+}
