@@ -1,21 +1,23 @@
 import EpisodeRow, { type EpisodeRowData } from './EpisodeRow'
 
+import styles from './EpisodeTable.module.css'
+
 type EpisodeTableProps = { podcastId: string; episodes: EpisodeRowData[] }
 
 const EpisodeTable = ({ podcastId, episodes }: EpisodeTableProps) => {
   return (
-    <div className="overflow-x-auto rounded border border-gray-200 shadow-sm">
-      <table className="w-full text-left text-sm">
+    <div className={styles.wrapper}>
+      <table className={styles.table}>
         <caption className="sr-only">Episodes</caption>
         <thead>
           <tr>
-            <th scope="col" className="px-4 py-2 font-bold">
+            <th scope="col" className={styles.heading}>
               Title
             </th>
-            <th scope="col" className="px-4 py-2 font-bold">
+            <th scope="col" className={styles.heading}>
               Date
             </th>
-            <th scope="col" className="px-4 py-2 font-bold">
+            <th scope="col" className={styles.heading}>
               Duration
             </th>
           </tr>
