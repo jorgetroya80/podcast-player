@@ -1,0 +1,10 @@
+.error {
+  padding: calc(var(--spacing) * 4);
+  text-align: center;
+}
+
+.title {
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  font-weight: 700;
+}
