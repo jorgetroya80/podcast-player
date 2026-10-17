@@ -1,1 +1,7 @@
+/* Declared before Tailwind so app-* layers have the lowest precedence: they never beat Tailwind's base/utilities during coexistence, and unlayered CSS Modules beat everything. */
+@layer app-reset, app-globals;
+
+@import './tokens.css';
+@import './reset.css' layer(app-reset);
+@import './globals.css' layer(app-globals);
 @import 'tailwindcss';
