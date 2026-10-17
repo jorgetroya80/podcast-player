@@ -1,0 +1,27 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 6);
+  padding: calc(var(--spacing) * 4);
+
+  @media (width >= 48rem) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.sidebar {
+  @media (width >= 48rem) {
+    width: calc(var(--spacing) * 72);
+    flex-shrink: 0;
+  }
+
+  @media (width >= 64rem) {
+    width: calc(var(--spacing) * 80);
+  }
+}
+
+.content {
+  min-width: 0;
+  flex: 1;
+}

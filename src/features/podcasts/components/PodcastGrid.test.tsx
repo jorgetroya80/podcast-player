@@ -35,16 +35,6 @@ describe('PodcastGrid', () => {
     expect(items[0]).toHaveTextContent('One')
   })
 
-  it('keeps the grid classes on the list', () => {
-    render(
-      <PodcastGrid>
-        <div />
-      </PodcastGrid>,
-    )
-
-    expect(screen.getByRole('list')).toHaveClass('mt-10', 'grid', 'grid-cols-1', 'xl:grid-cols-4')
-  })
-
   it('does not emit React key warnings for mapped children', () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     render(
