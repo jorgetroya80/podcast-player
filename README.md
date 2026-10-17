@@ -56,6 +56,17 @@ pnpm preview
 | `pnpm typecheck`     | TypeScript project build without emitting     |
 | `pnpm format`        | Format everything with Prettier               |
 
+### Git hooks
+
+[Husky](https://typicode.github.io/husky/) installs the hooks in `.husky/` automatically on `pnpm install` (the `prepare` script).
+
+| Hook         | What it does                                                                                                                                                                             |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pre-commit` | Runs [lint-staged](https://github.com/lint-staged/lint-staged) on staged files (`eslint --fix` and `prettier --write` for JS/TS, `prettier --write` for the rest), then `pnpm typecheck` |
+| `pre-push`   | Rejects the push when the current branch is `main`                                                                                                                                       |
+
+The hooks are a fast local check, not the protection itself: `git commit --no-verify` and `git push --no-verify` skip them. `main` is protected on GitHub by a ruleset that requires a pull request with passing CI (`lint`, `typecheck`, `test`, `build`) and blocks direct and force pushes.
+
 ### Why pnpm instead of npm
 
 The project is developed and tested with pnpm, and `pnpm-lock.yaml` is the only lockfile. The reasons:
@@ -90,6 +101,7 @@ npm is not supported: there is no `package-lock.json`, and mixing lockfiles woul
 | URL detection       | [linkify-it](https://github.com/markdown-it/linkify-it) 6.1.0                               | Turns plain-text URLs in descriptions into links      |
 | Tests               | [Vitest](https://vitest.dev), Testing Library, `user-event`, [MSW](https://mswjs.io), jsdom | Behavior-level tests with a mocked network            |
 | Lint and formatting | ESLint 10 (+ `eslint-plugin-boundaries`), Prettier (+ Tailwind plugin)                      | Consistent code and enforced layer rules              |
+| Git hooks           | Husky + lint-staged                                                                         | Lint, format and typecheck before each commit         |
 | Package manager     | pnpm                                                                                        | See [Why pnpm](#why-pnpm-instead-of-npm)              |
 
 There is no global client state library (no Redux, no Zustand): server data lives in TanStack Query, and the only local UI state is the filter text.
