@@ -1,5 +1,5 @@
 /*
-  Subset of tailwindcss/preflight.css; replaces it once Tailwind is removed.
+  Based on Tailwind 4 preflight.css, which the app used before CSS Modules.
   Includes inline elements (abbr, code, sub...) because episode descriptions inject external HTML.
 */
 
