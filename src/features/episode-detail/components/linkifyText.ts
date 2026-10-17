@@ -26,6 +26,6 @@ export const linkifyText = (text: string): string => {
     html += escapeHtml(text.slice(position, link.index)) + toAnchor(link)
     position = link.lastIndex
   }
-  
+
   return html + escapeHtml(text.slice(position))
 }

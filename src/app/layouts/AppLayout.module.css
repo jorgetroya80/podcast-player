@@ -1,0 +1,4 @@
+.layout {
+  margin-inline: auto;
+  max-width: var(--container-7xl);
+}

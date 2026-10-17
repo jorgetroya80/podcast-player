@@ -1,1 +1,6 @@
-@import 'tailwindcss';
+/* Globals live in layers so unlayered CSS Modules always win over them. */
+@layer app-reset, app-globals;
+
+@import './tokens.css';
+@import './reset.css' layer(app-reset);
+@import './globals.css' layer(app-globals);

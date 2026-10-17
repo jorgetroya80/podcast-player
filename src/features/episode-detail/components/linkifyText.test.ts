@@ -67,7 +67,6 @@ describe('linkifyText', () => {
     expect(linkifyText('mailto:ana@example.com')).toBe('mailto:ana@example.com')
   })
 
-
   it('escapes markup characters and does not interpret them', () => {
     expect(linkifyText('<b>Q&A</b> a > b')).toBe('&lt;b&gt;Q&amp;A&lt;/b&gt; a &gt; b')
   })

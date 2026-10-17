@@ -1,0 +1,52 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 4);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-gray-200);
+  padding: calc(var(--spacing) * 4);
+  box-shadow: var(--shadow-sm);
+}
+
+.imageLink {
+  align-self: center;
+}
+
+.image {
+  width: calc(var(--spacing) * 44);
+  height: calc(var(--spacing) * 44);
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+}
+
+.section {
+  border-top: 1px solid var(--color-gray-200);
+  padding-top: calc(var(--spacing) * 4);
+}
+
+.name {
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  font-weight: 700;
+}
+
+.artist {
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  color: var(--color-gray-500);
+  font-style: italic;
+}
+
+.descriptionTitle {
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  font-weight: 700;
+}
+
+.description {
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  overflow-wrap: break-word;
+  color: var(--color-gray-600);
+  font-style: italic;
+}

@@ -1,3 +1,5 @@
+import styles from './PodcastFilter.module.css'
+
 type PodcastFilterProps = {
   value: string
   onChange: (value: string) => void
@@ -6,12 +8,8 @@ type PodcastFilterProps = {
 
 const PodcastFilter = ({ value, onChange, count }: PodcastFilterProps) => {
   return (
-    <div role="search" className="flex items-center justify-end gap-3">
-      {count !== undefined && (
-        <span className="rounded bg-blue-500 px-2 py-0.5 text-sm font-bold text-white">
-          {count}
-        </span>
-      )}
+    <div role="search" className={styles.filter}>
+      {count !== undefined && <span className={styles.count}>{count}</span>}
       <label htmlFor="filter-podcasts" className="sr-only">
         Filter podcasts
       </label>
@@ -21,7 +19,7 @@ const PodcastFilter = ({ value, onChange, count }: PodcastFilterProps) => {
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder="Filter podcasts..."
-        className="w-full rounded border border-gray-300 px-3 py-2 sm:w-64"
+        className={styles.input}
       />
     </div>
   )

@@ -1,5 +1,7 @@
+import styles from './EpisodeListEmpty.module.css'
+
 const EpisodeListEmpty = () => {
-  return <p className="py-10 text-center text-gray-500">No episodes available</p>
+  return <p className={styles.message}>No episodes available</p>
 }
 
 export default EpisodeListEmpty

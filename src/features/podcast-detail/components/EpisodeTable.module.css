@@ -1,0 +1,19 @@
+.wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-gray-200);
+  box-shadow: var(--shadow-sm);
+}
+
+.table {
+  width: 100%;
+  text-align: left;
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+}
+
+.heading {
+  padding-inline: calc(var(--spacing) * 4);
+  padding-block: calc(var(--spacing) * 2);
+  font-weight: 700;
+}
