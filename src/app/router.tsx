@@ -49,4 +49,4 @@ export const routes = (queryClient: QueryClient): RouteObject[] => [
 ]
 
 export const createAppRouter = (queryClient: QueryClient) =>
-  createBrowserRouter(routes(queryClient))
+  createBrowserRouter(routes(queryClient), { basename: import.meta.env.BASE_URL })

@@ -6,6 +6,7 @@ const PORT = 3000
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/podcast-player/',  // For GitHub Pages
   plugins: [react(), tailwindcss()],
   server: {
     port: PORT,
