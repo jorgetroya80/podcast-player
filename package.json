@@ -9,11 +9,11 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
+    "prepare": "husky",
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "prepare": "husky"
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@tailwindcss/vite": "4.3.3",
