@@ -6,13 +6,15 @@ import {
 } from '../../features/podcast-detail'
 import { useRequiredParam } from '../../shared/hooks/useRequiredParam'
 
+import styles from './PodcastDetailPage.module.css'
+
 const PodcastDetailPage = () => {
   const podcastId = useRequiredParam('podcastId')
   const { detail } = usePodcastDetail(podcastId)
   const { episodeCount, episodes } = detail
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className={styles.page}>
       <EpisodeCount count={episodeCount} />
       {episodes.length === 0 ? (
         <EpisodeListEmpty />
