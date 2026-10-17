@@ -1,3 +1,5 @@
+import styles from './PodcastListEmpty.module.css'
+
 type PodcastListEmptyProps = { query?: string }
 
 const PodcastListEmpty = ({ query = '' }: PodcastListEmptyProps) => {
@@ -5,7 +7,7 @@ const PodcastListEmpty = ({ query = '' }: PodcastListEmptyProps) => {
     ? `No podcasts found by "${query.trim()}"`
     : 'No podcasts available right now'
 
-  return <p className="py-10 text-center text-gray-500">{message}</p>
+  return <p className={styles.message}>{message}</p>
 }
 
 export default PodcastListEmpty
