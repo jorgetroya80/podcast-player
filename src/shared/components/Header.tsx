@@ -1,9 +1,11 @@
 import { Link } from 'react-router'
 
+import styles from './Header.module.css'
+
 const Header = () => {
   return (
-    <header className="border-b border-gray-200 p-4 text-blue-500">
-      <Link to="/" className="text-lg font-bold">
+    <header className={styles.header}>
+      <Link to="/" className={styles.logo}>
         Podcaster
       </Link>
     </header>
