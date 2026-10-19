@@ -1,12 +1,15 @@
-import react from '@vitejs/plugin-react'
+import babel from '@rolldown/plugin-babel'
+import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
 
 const PORT = 3000
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   base: '/podcast-player/', // For GitHub Pages
-  plugins: [react()],
+  // React Compiler only outside Vitest: its memo cache adds branches that a single render never
+  // takes, which would make V8 branch coverage measure the generated code instead of ours.
+  plugins: [react(), ...(mode === 'test' ? [] : [babel({ presets: [reactCompilerPreset()] })])],
   server: {
     port: PORT,
   },
@@ -23,4 +26,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))
