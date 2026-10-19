@@ -1,14 +1,14 @@
 import { Link } from 'react-router'
 
-import type { Podcast } from '../../../shared/types'
+import { useSelectedPodcast } from '../hooks/useSelectedPodcast'
 
 import styles from './PodcastSidebar.module.css'
 
-type PodcastSidebarProps = Pick<Podcast, 'id' | 'name' | 'artist' | 'image'> & {
-  description?: string
-}
+const PodcastSidebar = () => {
+  const { podcast } = useSelectedPodcast()
+  if (!podcast) return null
 
-const PodcastSidebar = ({ id, name, artist, image, description }: PodcastSidebarProps) => {
+  const { id, name, artist, image, description } = podcast
   const to = `/podcast/${id}`
 
   return (

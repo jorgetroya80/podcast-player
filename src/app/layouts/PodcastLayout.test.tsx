@@ -1,6 +1,8 @@
 import { act, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 
+import { useSelectedPodcast } from '../../features/podcast-detail'
 import { TOP_PODCASTS_URL } from '../../shared/api/config'
 import { createQueryClient } from '../../shared/api/queryClient'
 import podcastDetails from '../../test/mocks/podcastDetails.json'
@@ -8,6 +10,7 @@ import podcastList from '../../test/mocks/podcastList.json'
 import { server } from '../../test/mocks/server'
 import { renderRoutes } from '../../test/renderWithProviders'
 import { routes } from '../router'
+import PodcastLayout from './PodcastLayout'
 
 const LISTED_ID = '1535809341'
 const LISTED_NAME = 'The Joe Budden Podcast'
@@ -172,5 +175,79 @@ describe('PodcastLayout', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Podcast not found.')
     expect(screen.getByRole('banner')).toHaveTextContent('Podcaster')
     expect(consoleError).toHaveBeenCalled()
+  })
+
+  describe('selected podcast context', () => {
+    const SelectedPodcastProbe = () => {
+      const { podcastId, podcast, detail } = useSelectedPodcast()
+      return <p>{`${podcastId} | ${podcast?.name} | ${detail.episodeCount}`}</p>
+    }
+
+    it('gives the child routes the podcast id, the sidebar podcast and the detail', async () => {
+      renderRoutes(
+        () => [
+          {
+            path: '/podcast/:podcastId',
+            element: <PodcastLayout />,
+            children: [{ index: true, element: <SelectedPodcastProbe /> }],
+          },
+        ],
+        { route: `/podcast/${LISTED_ID}` },
+      )
+
+      expect(await screen.findByText(`${LISTED_ID} | ${LISTED_NAME} | 556`)).toBeInTheDocument()
+    })
+
+    const countLookups = () => {
+      const lookups = { count: 0 }
+      server.use(
+        http.get(LOOKUP, () => {
+          lookups.count += 1
+          return HttpResponse.json(podcastDetails)
+        }),
+      )
+      return lookups
+    }
+
+    it('shows the same sidebar with one lookup on a direct load', async () => {
+      const lookups = countLookups()
+
+      // Real client: the test client has staleTime 0 and would refetch when the page mounts.
+      renderRoutes(routes, { route: `/podcast/${LISTED_ID}`, queryClient: createQueryClient() })
+
+      await screen.findByText(/^Episodes: /)
+      const sidebar = screen.getByRole('complementary')
+      expect(within(sidebar).getByRole('heading', { name: LISTED_NAME })).toBeInTheDocument()
+      expect(lookups.count).toBe(1)
+    })
+
+    it('shows the same sidebar with one lookup when coming from the list', async () => {
+      const lookups = countLookups()
+      renderRoutes(routes, { queryClient: createQueryClient() })
+
+      await userEvent.click(await screen.findByRole('link', { name: new RegExp(LISTED_NAME) }))
+
+      await screen.findByText(/^Episodes: /)
+      const sidebar = screen.getByRole('complementary')
+      expect(within(sidebar).getByRole('heading', { name: LISTED_NAME })).toBeInTheDocument()
+      expect(lookups.count).toBe(1)
+    })
+
+    it('switches the sidebar and the episode links when navigating to another podcast', async () => {
+      const OTHER_ID = '1751194045'
+      const { router } = renderAt(`/podcast/${LISTED_ID}`)
+      await screen.findByText(/^Episodes: /)
+      const sidebar = screen.getByRole('complementary')
+
+      await act(() => router.navigate(`/podcast/${OTHER_ID}`))
+
+      expect(
+        await within(sidebar).findByRole('heading', { name: /Tony Mantor/ }),
+      ).toBeInTheDocument()
+      expect(screen.getByRole('complementary')).toBe(sidebar)
+      expect(
+        await screen.findByRole('link', { name: 'Has Taylor Swift jumped the shark?' }),
+      ).toHaveAttribute('href', `/podcast/${OTHER_ID}/episode/1000793367564`)
+    })
   })
 })

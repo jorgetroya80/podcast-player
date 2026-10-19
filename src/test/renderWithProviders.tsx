@@ -8,14 +8,14 @@ import { createQueryCache } from '../shared/api/queryClient'
 export const createTestQueryClient = () =>
   new QueryClient({ queryCache: createQueryCache(), defaultOptions: { queries: { retry: false } } })
 
-type Options = {
+export type RenderOptions = {
   route?: string
   queryClient?: QueryClient
 }
 
 export const renderWithProviders = (
   ui: ReactElement,
-  { route = '/', queryClient = createTestQueryClient() }: Options = {},
+  { route = '/', queryClient = createTestQueryClient() }: RenderOptions = {},
 ) => ({
   queryClient,
   ...render(
@@ -27,7 +27,7 @@ export const renderWithProviders = (
 
 export const renderRoutes = (
   routes: (queryClient: QueryClient) => RouteObject[],
-  { route = '/', queryClient = createTestQueryClient() }: Options = {},
+  { route = '/', queryClient = createTestQueryClient() }: RenderOptions = {},
 ) => {
   const router = createMemoryRouter(routes(queryClient), { initialEntries: [route] })
   return {

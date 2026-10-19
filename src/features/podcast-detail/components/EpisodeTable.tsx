@@ -2,9 +2,9 @@ import EpisodeRow, { type EpisodeRowData } from './EpisodeRow'
 
 import styles from './EpisodeTable.module.css'
 
-type EpisodeTableProps = { podcastId: string; episodes: EpisodeRowData[] }
+type EpisodeTableProps = { episodes: EpisodeRowData[] }
 
-const EpisodeTable = ({ podcastId, episodes }: EpisodeTableProps) => {
+const EpisodeTable = ({ episodes }: EpisodeTableProps) => {
   return (
     <div className={styles.wrapper}>
       <table className={styles.table}>
@@ -24,7 +24,7 @@ const EpisodeTable = ({ podcastId, episodes }: EpisodeTableProps) => {
         </thead>
         <tbody>
           {episodes.map((episode) => (
-            <EpisodeRow key={episode.id} podcastId={podcastId} episode={episode} />
+            <EpisodeRow key={episode.id} episode={episode} />
           ))}
         </tbody>
       </table>

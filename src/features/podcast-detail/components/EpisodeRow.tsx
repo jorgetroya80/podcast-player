@@ -3,14 +3,17 @@ import { Link } from 'react-router'
 import { formatDate } from '../../../shared/utils/formatDate'
 import { formatDuration } from '../../../shared/utils/formatDuration'
 import type { Episode } from '../../../shared/types'
+import { useSelectedPodcast } from '../hooks/useSelectedPodcast'
 
 import styles from './EpisodeRow.module.css'
 
 export type EpisodeRowData = Pick<Episode, 'id' | 'title' | 'releasedAt' | 'durationMs'>
 
-type EpisodeRowProps = { podcastId: string; episode: EpisodeRowData }
+type EpisodeRowProps = { episode: EpisodeRowData }
 
-const EpisodeRow = ({ podcastId, episode }: EpisodeRowProps) => {
+const EpisodeRow = ({ episode }: EpisodeRowProps) => {
+  const { podcastId } = useSelectedPodcast()
+
   return (
     <tr className={styles.row}>
       <td className={styles.cell}>

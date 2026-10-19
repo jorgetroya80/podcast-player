@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router'
 
+import { PodcastFilterProvider } from '../../features/podcasts'
 import Header from '../../shared/components/Header'
 import RouteLoadingIndicator from '../../shared/components/RouteLoadingIndicator'
 
@@ -11,7 +12,9 @@ const AppLayout = () => {
       <Header />
       <RouteLoadingIndicator />
       <main>
-        <Outlet />
+        <PodcastFilterProvider>
+          <Outlet />
+        </PodcastFilterProvider>
       </main>
     </div>
   )

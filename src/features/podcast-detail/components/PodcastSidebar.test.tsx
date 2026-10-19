@@ -1,13 +1,17 @@
 import { screen } from '@testing-library/react'
 
-import { renderWithProviders } from '../../../test/renderWithProviders'
+import { renderWithSelectedPodcast } from '../../../test/renderWithSelectedPodcast'
+import type { SelectedPodcast } from '../context/SelectedPodcastContext'
 import PodcastSidebar from './PodcastSidebar'
 
 const base = { id: '42', name: 'Serial', artist: 'Sarah Koenig', image: 'https://img/1.png' }
 
+const renderSidebar = (podcast?: SelectedPodcast) =>
+  renderWithSelectedPodcast(<PodcastSidebar />, { podcast })
+
 describe('PodcastSidebar', () => {
   it('links image, title and author to the podcast', () => {
-    renderWithProviders(<PodcastSidebar {...base} description="About" />)
+    renderSidebar({ ...base, description: 'About' })
 
     const links = screen.getAllByRole('link')
     expect(links).toHaveLength(3)
@@ -18,21 +22,27 @@ describe('PodcastSidebar', () => {
   })
 
   it('uses the name as image alt text', () => {
-    renderWithProviders(<PodcastSidebar {...base} />)
+    renderSidebar(base)
 
     expect(screen.getByAltText('Serial')).toHaveAttribute('src', 'https://img/1.png')
   })
 
   it('renders the description when present', () => {
-    renderWithProviders(<PodcastSidebar {...base} description="A true story" />)
+    renderSidebar({ ...base, description: 'A true story' })
 
     expect(screen.getByRole('heading', { name: 'Description' })).toBeInTheDocument()
     expect(screen.getByText('A true story')).toBeInTheDocument()
   })
 
   it.each([undefined, ''])('renders no description block when %j', (description) => {
-    renderWithProviders(<PodcastSidebar {...base} description={description} />)
+    renderSidebar({ ...base, description })
 
     expect(screen.queryByRole('heading', { name: 'Description' })).not.toBeInTheDocument()
+  })
+
+  it('renders nothing without a podcast in the context', () => {
+    const { container } = renderSidebar(undefined)
+
+    expect(container).toBeEmptyDOMElement()
   })
 })
