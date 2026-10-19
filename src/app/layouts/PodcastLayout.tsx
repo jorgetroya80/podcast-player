@@ -22,7 +22,7 @@ const PodcastLayout = () => {
       <div className={styles.layout}>
         {podcast && (
           <div className={styles.sidebar}>
-            <PodcastSidebar {...podcast} />
+            <PodcastSidebar />
           </div>
         )}
         <div className={styles.content}>{isPending ? <EpisodeTableSkeleton /> : <Outlet />}</div>
