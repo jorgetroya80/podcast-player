@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react'
 
-import { renderWithProviders } from '../../../test/renderWithProviders'
+import { renderWithSelectedPodcast } from '../../../test/renderWithProviders'
 import EpisodeRow, { type EpisodeRowData } from './EpisodeRow'
 
 const episode: EpisodeRowData = {
@@ -11,12 +11,13 @@ const episode: EpisodeRowData = {
 }
 
 const renderRow = (ep = episode) =>
-  renderWithProviders(
+  renderWithSelectedPodcast(
     <table>
       <tbody>
-        <EpisodeRow podcastId="42" episode={ep} />
+        <EpisodeRow episode={ep} />
       </tbody>
     </table>,
+    { podcastId: '42' },
   )
 
 describe('EpisodeRow', () => {

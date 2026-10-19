@@ -2,25 +2,18 @@ import {
   EpisodeCount,
   EpisodeListEmpty,
   EpisodeTable,
-  usePodcastDetail,
+  useSelectedPodcast,
 } from '../../features/podcast-detail'
-import { useRequiredParam } from '../../shared/hooks/useRequiredParam'
 
 import styles from './PodcastDetailPage.module.css'
 
 const PodcastDetailPage = () => {
-  const podcastId = useRequiredParam('podcastId')
-  const { detail } = usePodcastDetail(podcastId)
-  const { episodeCount, episodes } = detail
+  const { episodeCount, episodes } = useSelectedPodcast().detail
 
   return (
     <div className={styles.page}>
       <EpisodeCount count={episodeCount} />
-      {episodes.length === 0 ? (
-        <EpisodeListEmpty />
-      ) : (
-        <EpisodeTable podcastId={podcastId} episodes={episodes} />
-      )}
+      {episodes.length === 0 ? <EpisodeListEmpty /> : <EpisodeTable episodes={episodes} />}
     </div>
   )
 }
