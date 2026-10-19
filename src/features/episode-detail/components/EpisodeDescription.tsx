@@ -1,5 +1,3 @@
-import { useMemo } from 'react'
-
 import plainTextToHtml from './plainTextToHtml'
 import sanitizeHtml from './sanitizeHtml'
 
@@ -8,7 +6,7 @@ import styles from './EpisodeDescription.module.css'
 type EpisodeDescriptionProps = { html?: string }
 
 const EpisodeDescription = ({ html }: EpisodeDescriptionProps) => {
-  const clean = useMemo(() => (html?.trim() ? sanitizeHtml(plainTextToHtml(html)) : ''), [html])
+  const clean = html?.trim() ? sanitizeHtml(plainTextToHtml(html)) : ''
 
   if (!clean) return null
 
