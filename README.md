@@ -90,28 +90,32 @@ npm is not supported: there is no `package-lock.json`, and mixing lockfiles woul
 
 ## Tech stack
 
-| Area                | Choice                                                                                      | Why                                                   |
-| ------------------- | ------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| UI                  | [React](https://react.dev) 19 + TypeScript 6                                                | Typed components and hooks                            |
-| Build tool          | [Vite](https://vite.dev) 8                                                                  | Fast dev server; minified production bundle           |
-| Routing             | [React Router](https://reactrouter.com) 8 (data router)                                     | Loaders, nested layouts, `errorElement`               |
-| Server state        | [TanStack Query](https://tanstack.com/query) 5 + async storage persister                    | Caching, deduplication, persistence in `localStorage` |
-| Styling             | CSS Modules (built into Vite) with native CSS                                               | Scoped styles, mobile-first, no preprocessor          |
-| HTML sanitization   | [DOMPurify](https://github.com/cure53/DOMPurify) 3                                          | Safe rendering of episode descriptions                |
-| URL detection       | [linkify-it](https://github.com/markdown-it/linkify-it) 6.1.0                               | Turns plain-text URLs in descriptions into links      |
-| Tests               | [Vitest](https://vitest.dev), Testing Library, `user-event`, [MSW](https://mswjs.io), jsdom | Behavior-level tests with a mocked network            |
-| Lint and formatting | ESLint 10 (+ `eslint-plugin-boundaries`), Prettier                                          | Consistent code and enforced layer rules              |
-| Git hooks           | Husky + lint-staged                                                                         | Lint, format and typecheck before each commit         |
-| Package manager     | pnpm                                                                                        | See [Why pnpm](#why-pnpm-instead-of-npm)              |
+| Area                | Choice                                                                                      | Why                                                      |
+| ------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| UI                  | [React](https://react.dev) 19 + TypeScript 6                                                | Typed components and hooks                               |
+| Build tool          | [Vite](https://vite.dev) 8                                                                  | Fast dev server; minified production bundle              |
+| Memoization         | [React Compiler](https://react.dev/learn/react-compiler) 1.0 (Babel plugin)                 | Automatic memoization, no manual `useMemo`; off in tests |
+| Routing             | [React Router](https://reactrouter.com) 8 (data router)                                     | Loaders, nested layouts, `errorElement`                  |
+| Server state        | [TanStack Query](https://tanstack.com/query) 5 + async storage persister                    | Caching, deduplication, persistence in `localStorage`    |
+| Styling             | CSS Modules (built into Vite) with native CSS                                               | Scoped styles, mobile-first, no preprocessor             |
+| HTML sanitization   | [DOMPurify](https://github.com/cure53/DOMPurify) 3                                          | Safe rendering of episode descriptions                   |
+| URL detection       | [linkify-it](https://github.com/markdown-it/linkify-it) 6.1.0                               | Turns plain-text URLs in descriptions into links         |
+| Tests               | [Vitest](https://vitest.dev), Testing Library, `user-event`, [MSW](https://mswjs.io), jsdom | Behavior-level tests with a mocked network               |
+| Lint and formatting | ESLint 10 (+ `eslint-plugin-boundaries`), Prettier                                          | Consistent code and enforced layer rules                 |
+| Git hooks           | Husky + lint-staged                                                                         | Lint, format and typecheck before each commit            |
+| Package manager     | pnpm                                                                                        | See [Why pnpm](#why-pnpm-instead-of-npm)                 |
 
-There is no global client state library (no Redux, no Zustand): server data lives in TanStack Query, and the only local UI state is the filter text.
+There is no global client state library (no Redux, no Zustand). Server data lives in TanStack Query and the URL holds the route state. React Context is used for two things, and neither replaces those sources of truth:
+
+- **`PodcastFilterProvider`** (mounted in `AppLayout`) keeps the filter text in memory, so it survives navigating to a podcast and back. A reload clears it.
+- **`SelectedPodcastProvider`** (mounted in `PodcastLayout`) shares the active podcast (`podcastId`, sidebar data and detail) with the sidebar and the child routes. The layout resolves it once from the URL and the query cache, so a direct load works the same as navigating from the list, with no extra request.
 
 ## Architecture
 
 The code follows a **simplified Feature-Sliced Design (FSD)**. FSD organizes an application in layers with a strict dependency direction and in feature slices that expose a public API. This project keeps the parts that give the most value for its size and drops the rest:
 
 - **Kept:** layers with dependencies that only point downwards, feature slices, a public API per slice (`index.ts`), and the rule that a slice never imports from another slice.
-- **Simplified:** only four layers (`app`, `pages`, `features`, `shared`; no `widgets` or `entities`), and plain segment folders inside a feature (`api`, `components`, `hooks`, `utils`).
+- **Simplified:** only four layers (`app`, `pages`, `features`, `shared`; no `widgets` or `entities`), and plain segment folders inside a feature (`api`, `components`, `hooks`, `utils`, `context`).
 
 ### Layers
 
