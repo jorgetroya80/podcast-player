@@ -232,5 +232,22 @@ describe('PodcastLayout', () => {
       expect(within(sidebar).getByRole('heading', { name: LISTED_NAME })).toBeInTheDocument()
       expect(lookups.count).toBe(1)
     })
+
+    it('switches the sidebar and the episode links when navigating to another podcast', async () => {
+      const OTHER_ID = '1751194045'
+      const { router } = renderAt(`/podcast/${LISTED_ID}`)
+      await screen.findByText(/^Episodes: /)
+      const sidebar = screen.getByRole('complementary')
+
+      await act(() => router.navigate(`/podcast/${OTHER_ID}`))
+
+      expect(
+        await within(sidebar).findByRole('heading', { name: /Tony Mantor/ }),
+      ).toBeInTheDocument()
+      expect(screen.getByRole('complementary')).toBe(sidebar)
+      expect(
+        await screen.findByRole('link', { name: 'Has Taylor Swift jumped the shark?' }),
+      ).toHaveAttribute('href', `/podcast/${OTHER_ID}/episode/1000793367564`)
+    })
   })
 })

@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react'
 
-import { renderWithSelectedPodcast } from '../../../test/renderWithProviders'
+import { renderWithSelectedPodcast } from '../../../test/renderWithSelectedPodcast'
 import EpisodeTable from './EpisodeTable'
 
 const episodes = [
