@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react'
 
-import { renderWithProviders } from '../../../test/renderWithProviders'
+import { renderWithSelectedPodcast } from '../../../test/renderWithSelectedPodcast'
 import EpisodeTable from './EpisodeTable'
 
 const episodes = [
@@ -10,7 +10,7 @@ const episodes = [
 
 describe('EpisodeTable', () => {
   it('renders an accessible table with headers', () => {
-    renderWithProviders(<EpisodeTable podcastId="42" episodes={episodes} />)
+    renderWithSelectedPodcast(<EpisodeTable episodes={episodes} />)
 
     expect(screen.getByRole('table', { name: 'Episodes' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Title' })).toHaveAttribute('scope', 'col')
@@ -18,18 +18,18 @@ describe('EpisodeTable', () => {
     expect(screen.getByRole('columnheader', { name: 'Duration' })).toBeInTheDocument()
   })
 
-  it('renders one row per episode with links', () => {
-    renderWithProviders(<EpisodeTable podcastId="42" episodes={episodes} />)
+  it('renders one row per episode linking to the podcast in the context', () => {
+    renderWithSelectedPodcast(<EpisodeTable episodes={episodes} />, { podcastId: '99' })
 
     // header row + 2 episodes
     expect(screen.getAllByRole('row')).toHaveLength(3)
     expect(screen.getByRole('link', { name: 'First' })).toHaveAttribute(
       'href',
-      '/podcast/42/episode/1',
+      '/podcast/99/episode/1',
     )
     expect(screen.getByRole('link', { name: 'Second' })).toHaveAttribute(
       'href',
-      '/podcast/42/episode/2',
+      '/podcast/99/episode/2',
     )
   })
 })

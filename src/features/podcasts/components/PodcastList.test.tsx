@@ -5,9 +5,15 @@ import { http, HttpResponse } from 'msw'
 import { server } from '../../../test/mocks/server'
 import { renderWithProviders } from '../../../test/renderWithProviders'
 
+import PodcastFilterProvider from './PodcastFilterProvider'
 import PodcastList from './PodcastList'
 
-const renderList = () => renderWithProviders(<PodcastList />)
+const renderList = () =>
+  renderWithProviders(
+    <PodcastFilterProvider>
+      <PodcastList />
+    </PodcastFilterProvider>,
+  )
 
 describe('PodcastList', () => {
   it('shows the skeleton, then the podcasts', async () => {
