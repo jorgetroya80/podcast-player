@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
 
 import PodcastFilterProvider from '../components/PodcastFilterProvider'
-import { usePodcastFilter } from './usePodcastFilter'
+import { usePodcastFilter } from './PodcastFilterContext'
 
 const podcasts = [
   { name: 'Serial', artist: 'Sarah Koenig' },
@@ -29,7 +29,7 @@ describe('usePodcastFilter', () => {
   })
 
   it('throws outside PodcastFilterProvider', () => {
-    // React reports the render error to console.error before rethrowing it.
+    // React reports the render error to console.error
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
 
     expect(() => renderHook(() => usePodcastFilter(podcasts))).toThrow(
