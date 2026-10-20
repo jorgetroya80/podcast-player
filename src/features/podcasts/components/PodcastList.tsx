@@ -1,4 +1,4 @@
-import { usePodcastFilter } from '../hooks/usePodcastFilter'
+import { usePodcastFilter } from '../context/PodcastFilterContext'
 import { usePodcasts } from '../hooks/usePodcasts'
 
 import PodcastCard from './PodcastCard'

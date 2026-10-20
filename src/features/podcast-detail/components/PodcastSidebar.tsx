@@ -1,6 +1,6 @@
 import { Link } from 'react-router'
 
-import { useSelectedPodcast } from '../hooks/useSelectedPodcast'
+import { useSelectedPodcast } from '../context/SelectedPodcastContext'
 
 import styles from './PodcastSidebar.module.css'
 

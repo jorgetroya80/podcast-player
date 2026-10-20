@@ -3,8 +3,7 @@ import type { ReactNode } from 'react'
 
 import { EMPTY_PODCAST_DETAIL } from '../api/emptyPodcastDetail'
 import SelectedPodcastProvider from '../components/SelectedPodcastProvider'
-import type { SelectedPodcastState } from '../context/SelectedPodcastContext'
-import { useSelectedPodcast } from './useSelectedPodcast'
+import { useSelectedPodcast, type SelectedPodcastState } from './SelectedPodcastContext'
 
 const state: SelectedPodcastState = {
   podcastId: '42',
