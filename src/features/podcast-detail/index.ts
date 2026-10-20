@@ -1,6 +1,6 @@
 export { podcastDetailQuery } from './api/podcastDetailQuery'
 export { usePodcastDetail } from './hooks/usePodcastDetail'
-export { useSelectedPodcast } from './hooks/useSelectedPodcast'
+export { useSelectedPodcast } from './context/SelectedPodcastContext'
 export { default as SelectedPodcastProvider } from './components/SelectedPodcastProvider'
 export type { SelectedPodcast, SelectedPodcastState } from './context/SelectedPodcastContext'
 export { default as PodcastSidebar } from './components/PodcastSidebar'

@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import { formatDate } from '../../../shared/utils/formatDate'
 import { formatDuration } from '../../../shared/utils/formatDuration'
 import type { Episode } from '../../../shared/types'
-import { useSelectedPodcast } from '../hooks/useSelectedPodcast'
+import { useSelectedPodcast } from '../context/SelectedPodcastContext'
 
 import styles from './EpisodeRow.module.css'
 
